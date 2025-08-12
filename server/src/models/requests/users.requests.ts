@@ -10,10 +10,6 @@ export interface LoginRequestBody {
   password: string
 }
 
-export interface LogoutRequestBody {
-  refresh_token: string
-}
-
-export interface VerifyTokenRequestBody {
+export interface AuthRequestBody {
   refresh_token: string
 }

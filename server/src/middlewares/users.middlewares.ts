@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import { ParamsDictionary } from 'express-serve-static-core'
-import { LoginRequestBody, RegisterRequestBody } from '~/models/requests/users.requests'
 import { SYSTEM_MESSAGE, USER_MESSAGE } from '~/constants/message.constants'
 import userService from '~/services/users.services'
 import HTTPSTATUS from '~/constants/httpStatus.constants'
@@ -9,11 +7,7 @@ import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import databaseService from '~/services/database.services'
 import { HashPassword } from '~/utils/encryption.utils'
 
-export const registerValidator = async (
-  req: Request<ParamsDictionary, any, RegisterRequestBody>,
-  res: Response,
-  next: NextFunction
-) => {
+export const registerValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(
     {
       token: {
@@ -160,11 +154,7 @@ export const registerValidator = async (
     })
 }
 
-export const loginValidator = async (
-  req: Request<ParamsDictionary, any, LoginRequestBody>,
-  res: Response,
-  next: NextFunction
-) => {
+export const loginValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(
     {
       email: {

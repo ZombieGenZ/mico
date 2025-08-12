@@ -5,7 +5,7 @@ import {
   registerController,
   verifyTokenController
 } from '~/controllers/users.controllers'
-import { refreshTokenValidator } from '~/middlewares/authenticate.middlewares'
+import { accessTokenValidator, refreshTokenValidator } from '~/middlewares/authenticate.middlewares'
 import { loginValidator, registerValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers.utils'
 const router = express.Router()
@@ -57,5 +57,15 @@ router.delete('/logout', refreshTokenValidator, wrapRequestHandler(logoutControl
  * }
  */
 router.post('/verify-token', refreshTokenValidator, wrapRequestHandler(verifyTokenController))
+
+/*
+ * Description:Lấy thông tin người dùng
+ * Path: /api/users/infomation
+ * Method: GET
+ * headers: {
+ *    authorization?: Bearer <token>
+ * }
+ */
+router.post('/infomation', accessTokenValidator, wrapRequestHandler(verifyTokenController))
 
 export default router

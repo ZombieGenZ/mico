@@ -1,17 +1,13 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { omit } from 'lodash'
 import { ObjectId } from 'mongodb'
 import HTTPSTATUS from '~/constants/httpStatus.constants'
 import { AUTHENTICATE_MESSAGE, USER_MESSAGE } from '~/constants/message.constants'
 import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import { TokenType } from '~/enums/jwt.enums'
 import { TokenPayload } from '~/models/requests/authentication.requests'
-import {
-  LoginRequestBody,
-  LogoutRequestBody,
-  RegisterRequestBody,
-  VerifyTokenRequestBody
-} from '~/models/requests/users.requests'
+import { AuthRequestBody, LoginRequestBody, RegisterRequestBody } from '~/models/requests/users.requests'
 import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
@@ -55,7 +51,7 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
   }
 }
 
-export const logoutController = async (req: Request<ParamsDictionary, any, LogoutRequestBody>, res: Response) => {
+export const logoutController = async (req: Request<ParamsDictionary, any, AuthRequestBody>, res: Response) => {
   try {
     const refresh_token = req.refresh_token as RefreshToken
     await userService.logout(refresh_token._id)
@@ -72,10 +68,7 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
   }
 }
 
-export const verifyTokenController = async (
-  req: Request<ParamsDictionary, any, VerifyTokenRequestBody>,
-  res: Response
-) => {
+export const verifyTokenController = async (req: Request<ParamsDictionary, any, AuthRequestBody>, res: Response) => {
   const access_token = req.headers.authorization || null
   const refresh_token = req.refresh_token as RefreshToken
 
@@ -165,6 +158,23 @@ export const verifyTokenController = async (
     res.json({
       code: RESPONSE_CODE.TOKEN_VERIFICATION_FAILED,
       message: USER_MESSAGE.VERIFY_TOKEN_FAILURE
+    })
+  }
+}
+
+export const infomationController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user
+
+    res.json({
+      code: RESPONSE_CODE.GET_USER_INFOMATION_SUCCESSFUL,
+      message: USER_MESSAGE.GET_USER_INFOMATION_SUCCESS,
+      infomation: omit(user, ['password'])
+    })
+  } catch (err: unknown) {
+    res.json({
+      code: RESPONSE_CODE.GET_USER_INFOMATION_FAILED,
+      message: USER_MESSAGE.GET_USER_INFOMATION_FAILURE
     })
   }
 }

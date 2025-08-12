@@ -23,8 +23,14 @@ app.get('/', (req, res) => {
 })
 
 import users from '~/routes/users.routes'
+import categories from '~/routes/categories.routes'
+import topics from '~/routes/topics.routes'
+import brands from '~/routes/brands.routes'
 
 app.use('/api/users', users)
+app.use('/api/categories', categories)
+app.use('/api/topics', topics)
+app.use('/api/brands', brands)
 
 app.use(defaultErrorHandler)
 

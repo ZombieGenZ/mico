@@ -2,6 +2,7 @@ import { Db, MongoClient, Collection, IndexSpecification, CreateIndexesOptions }
 import dotenv from 'dotenv'
 import User from '~/models/schemas/users.schemas'
 import RefreshToken from '~/models/schemas/refreshToken.schemas'
+import Category from '~/models/schemas/categories.schemas'
 
 dotenv.config()
 
@@ -32,6 +33,15 @@ class DatabaseService {
   }
   get refreshToken(): Collection<RefreshToken> {
     return this.db.collection(process.env.DATABASE_REFRESH_TOKEN_COLLECTION as string)
+  }
+  get categories(): Collection<Category> {
+    return this.db.collection(process.env.DATABASE_CATEGORY_COLLECTION as string)
+  }
+  get topics(): Collection<Category> {
+    return this.db.collection(process.env.DATABASE_TOPIC_COLLECTION as string)
+  }
+  get brands(): Collection<Category> {
+    return this.db.collection(process.env.DATABASE_BRAND_COLLECTION as string)
   }
 }
 
