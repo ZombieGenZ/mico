@@ -5,6 +5,7 @@ import {
   getCategoryController,
   updateCategoryController
 } from '~/controllers/categories.controllers'
+import { accessTokenValidator } from '~/middlewares/authenticate.middlewares'
 import { categoryIdValidator, categoryValidator } from '~/middlewares/categories.niddkewares'
 import { wrapRequestHandler } from '~/utils/handlers.utils'
 const router = express.Router()
@@ -28,7 +29,7 @@ router.get('/', wrapRequestHandler(getCategoryController))
  *    index: number
  * }
  */
-router.post('/', categoryValidator, wrapRequestHandler(createCategoryController))
+router.post('/', accessTokenValidator, categoryValidator, wrapRequestHandler(createCategoryController))
 
 /*
  * Description: Cập nhật danh mục
@@ -42,7 +43,13 @@ router.post('/', categoryValidator, wrapRequestHandler(createCategoryController)
  *    index: number
  * }
  */
-router.put('/:id', categoryIdValidator, categoryValidator, wrapRequestHandler(updateCategoryController))
+router.put(
+  '/:id',
+  accessTokenValidator,
+  categoryIdValidator,
+  categoryValidator,
+  wrapRequestHandler(updateCategoryController)
+)
 
 /*
  * Description: Xóa danh mục
@@ -52,6 +59,6 @@ router.put('/:id', categoryIdValidator, categoryValidator, wrapRequestHandler(up
  *    authorization?: Bearer <token>
  * }
  */
-router.delete('/:id', categoryIdValidator, wrapRequestHandler(deleteCategoryController))
+router.delete('/:id', accessTokenValidator, categoryIdValidator, wrapRequestHandler(deleteCategoryController))
 
 export default router

@@ -5,6 +5,7 @@ import {
   getBrandController,
   updateBrandController
 } from '~/controllers/brands.controllers'
+import { accessTokenValidator } from '~/middlewares/authenticate.middlewares'
 import { brandIdValidator, brandValidator } from '~/middlewares/brands.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers.utils'
 const router = express.Router()
@@ -28,7 +29,7 @@ router.get('/', wrapRequestHandler(getBrandController))
  *    index: number
  * }
  */
-router.post('/', brandValidator, wrapRequestHandler(createBrandController))
+router.post('/', accessTokenValidator, brandValidator, wrapRequestHandler(createBrandController))
 
 /*
  * Description: Cập nhật thương hiệu
@@ -42,7 +43,7 @@ router.post('/', brandValidator, wrapRequestHandler(createBrandController))
  *    index: number
  * }
  */
-router.put('/:id', brandValidator, brandIdValidator, wrapRequestHandler(updateBrandController))
+router.put('/:id', accessTokenValidator, brandValidator, brandIdValidator, wrapRequestHandler(updateBrandController))
 
 /*
  * Description: Xóa thương hiệu
@@ -52,6 +53,6 @@ router.put('/:id', brandValidator, brandIdValidator, wrapRequestHandler(updateBr
  *    authorization?: Bearer <token>
  * }
  */
-router.delete('/:id', brandIdValidator, wrapRequestHandler(deleteBrandController))
+router.delete('/:id', accessTokenValidator, brandIdValidator, wrapRequestHandler(deleteBrandController))
 
 export default router

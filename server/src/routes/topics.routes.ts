@@ -5,6 +5,7 @@ import {
   getTopicController,
   updateTopicController
 } from '~/controllers/topics.controllers'
+import { accessTokenValidator } from '~/middlewares/authenticate.middlewares'
 import { topicIdValidator, topicValidator } from '~/middlewares/topics.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers.utils'
 const router = express.Router()
@@ -28,7 +29,7 @@ router.get('/', wrapRequestHandler(getTopicController))
  *    index: number
  * }
  */
-router.post('/', topicValidator, wrapRequestHandler(createTopicController))
+router.post('/', accessTokenValidator, topicValidator, wrapRequestHandler(createTopicController))
 
 /*
  * Description: Cập nhật chủ đề
@@ -42,7 +43,7 @@ router.post('/', topicValidator, wrapRequestHandler(createTopicController))
  *    index: number
  * }
  */
-router.put('/:id', topicIdValidator, topicValidator, wrapRequestHandler(updateTopicController))
+router.put('/:id', accessTokenValidator, topicIdValidator, topicValidator, wrapRequestHandler(updateTopicController))
 
 /*
  * Description: Xóa chủ đề
@@ -52,6 +53,6 @@ router.put('/:id', topicIdValidator, topicValidator, wrapRequestHandler(updateTo
  *    authorization?: Bearer <token>
  * }
  */
-router.delete('/:id', topicIdValidator, wrapRequestHandler(deleteTopicController))
+router.delete('/:id', accessTokenValidator, topicIdValidator, wrapRequestHandler(deleteTopicController))
 
 export default router
