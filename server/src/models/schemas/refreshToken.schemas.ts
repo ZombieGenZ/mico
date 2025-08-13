@@ -1,12 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-interface RefreshTokenType {
-  _id?: ObjectId
-  token: string
-  user_id: ObjectId
-  created_at?: Date
-  updated_at?: Date
-}
+import { RefreshTokenType } from '~/interfaces/refreshToken.interfaces'
 
 export default class RefreshToken {
   _id: ObjectId
