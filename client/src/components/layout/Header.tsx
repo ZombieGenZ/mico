@@ -23,6 +23,11 @@ const Header: React.FC = () => {
       offset: 100,
       delay: 0,
     });
+    
+    // Refresh AOS khi component mount để đảm bảo detect được các elements
+    setTimeout(() => {
+      AOS.refresh();
+    }, 100);
   }, []); // Chỉ chạy một lần khi mount
   
   // Đóng mobile menu khi route thay đổi
@@ -48,25 +53,42 @@ const Header: React.FC = () => {
         className="bg-slate-800 py-2"
         data-aos="fade-down"
         data-aos-delay="0"
+        data-aos-duration="800"
       >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-1">
+              <div 
+                className="flex items-center space-x-1"
+                data-aos="fade-right"
+                data-aos-delay="200"
+              >
                 <Phone className="h-3 w-3 text-yellow-400" />
                 <span>0123.456.789</span>
               </div>
-              <div className="flex items-center space-x-1">
+              <div 
+                className="flex items-center space-x-1"
+                data-aos="fade-right"
+                data-aos-delay="300"
+              >
                 <Mail className="h-3 w-3 text-yellow-400" />
                 <span>info@xecongtrinhvn.com</span>
               </div>
-              <div className="flex items-center space-x-1">
+              <div 
+                className="flex items-center space-x-1"
+                data-aos="fade-right"
+                data-aos-delay="400"
+              >
                 <MapPin className="h-3 w-3 text-yellow-400" />
                 <span>TP. Hồ Chí Minh</span>
               </div>
             </div>
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
+              <div 
+                className="flex items-center space-x-4"
+                data-aos="fade-left"
+                data-aos-delay="500"
+              >
                 <Link to={ROUTES.ADMIN_DASHBOARD} className="flex items-center space-x-1 hover:text-yellow-400 transition-colors">
                   <User className="h-3 w-3" />
                   <span>{user?.name}</span>
@@ -80,7 +102,10 @@ const Header: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div>
+              <div 
+                data-aos="fade-left"
+                data-aos-delay="500"
+              >
                 <Link to={ROUTES.LOGIN} className="hover:text-yellow-400 transition-colors">
                   Đăng nhập
                 </Link>
@@ -97,6 +122,9 @@ const Header: React.FC = () => {
           <Link 
             to={ROUTES.HOME} 
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            data-aos="fade-right"
+            data-aos-delay="600"
+            data-aos-duration="1000"
           >
             <div className="bg-yellow-400 text-slate-900 p-2 rounded-lg">
               <span className="font-bold text-xl">XE</span>
@@ -108,8 +136,13 @@ const Header: React.FC = () => {
           </Link>
           
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
+          <nav 
+            className="hidden lg:flex items-center space-x-8"
+            data-aos="fade-down"
+            data-aos-delay="800"
+            data-aos-duration="1200"
+          >
+            {navigation.map((item, index) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -118,6 +151,9 @@ const Header: React.FC = () => {
                     ? 'text-yellow-400'
                     : 'text-white hover:text-yellow-400'
                 }`}
+                data-aos="fade-down"
+                data-aos-delay={900 + (index * 100)} // Staggered animation cho từng nav item
+                data-aos-duration="600"
               >
                 {item.name}
                 {isActive(item.href) && (
@@ -133,7 +169,12 @@ const Header: React.FC = () => {
           </nav>
           
           {/* CTA Button */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div 
+            className="hidden lg:flex items-center space-x-4"
+            data-aos="fade-left"
+            data-aos-delay="1200"
+            data-aos-duration="800"
+          >
             <Link to={ROUTES.QUOTE}>
               <Button variant="primary" size="md" className="transform hover:scale-105 transition-transform duration-200">
                 Yêu cầu báo giá
@@ -146,6 +187,8 @@ const Header: React.FC = () => {
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 hover:bg-slate-700 rounded-lg transition-colors"
             aria-label="Toggle menu"
+            data-aos="fade-left"
+            data-aos-delay="700"
           >
             <motion.div
               animate={{ rotate: isOpen ? 180 : 0 }}
