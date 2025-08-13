@@ -7,12 +7,13 @@ export interface ProductType {
   _id?: ObjectId
   path: string
   title: string
-  sub_title: string
+  subtitle: string
   technical_information: TechnicalInformationType[]
   features: Features[]
   image: ImageType[]
   price: number
   rent: number
+  rent_by: string
   category_id: ObjectId
   brand_id: ObjectId
   in_stock: boolean

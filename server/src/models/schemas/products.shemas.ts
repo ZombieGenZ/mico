@@ -8,12 +8,13 @@ export default class Product {
   _id: ObjectId
   path: string
   title: string
-  sub_title: string
+  subtitle: string
   technical_information: TechnicalInformationType[]
   features: Features[]
   image: ImageType[]
   price: number
   rent: number
+  rent_by: string
   category_id: ObjectId
   brand_id: ObjectId
   in_stock: boolean
@@ -30,12 +31,13 @@ export default class Product {
     this._id = product._id || new ObjectId()
     this.path = product.path
     this.title = product.title
-    this.sub_title = product.sub_title
+    this.subtitle = product.subtitle
     this.technical_information = product.technical_information
     this.features = product.features
     this.image = product.image
     this.price = product.price
     this.rent = product.rent
+    this.rent_by = product.rent_by
     this.category_id = product.category_id
     this.brand_id = product.brand_id
     this.in_stock = product.in_stock

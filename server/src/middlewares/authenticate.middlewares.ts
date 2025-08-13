@@ -7,6 +7,7 @@ import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import { TokenType } from '~/enums/jwt.enums'
 import { TokenPayload } from '~/models/requests/authentication.requests'
 import databaseService from '~/services/database.services'
+import { removeUploadedFiles } from '~/utils/image.utils'
 import { verifyToken } from '~/utils/jwt.utils'
 
 export const accessTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
@@ -71,6 +72,7 @@ export const accessTokenValidator = async (req: Request, res: Response, next: Ne
     .then(() => {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
+        removeUploadedFiles(req)
         res.status(HTTPSTATUS.UNAUTHORIZED).json({
           code: RESPONSE_CODE.AUTHENTICATION_FAILED,
           message: AUTHENTICATE_MESSAGE.AUTHENTICATION_FAILED,
@@ -82,6 +84,7 @@ export const accessTokenValidator = async (req: Request, res: Response, next: Ne
       return
     })
     .catch((err) => {
+      removeUploadedFiles(req)
       res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
         code: RESPONSE_CODE.FATAL_AUTHENTICATION_FAILURE,
         message: err
@@ -150,6 +153,7 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
     .then(() => {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
+        removeUploadedFiles(req)
         res.status(HTTPSTATUS.UNAUTHORIZED).json({
           code: RESPONSE_CODE.AUTHENTICATION_FAILED,
           message: AUTHENTICATE_MESSAGE.AUTHENTICATION_FAILED,
@@ -161,6 +165,7 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
       return
     })
     .catch((err) => {
+      removeUploadedFiles(req)
       res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
         code: RESPONSE_CODE.FATAL_AUTHENTICATION_FAILURE,
         message: err

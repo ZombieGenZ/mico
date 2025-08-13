@@ -7,3 +7,14 @@ yarn.lock
 
 public/**
 !public/.gitkeep
+
+!public/images/
+!public/images/uploads/
+!public/images/uploads/products/
+!public/images/uploads/products/temporary/
+!public/images/uploads/products/temporary/.gitkeep
+!public/images/uploads/posts/
+!public/images/uploads/posts/temporary/
+!public/images/uploads/posts/temporary/.gitkeep
+!public/images/uploads/posts/posts/
+!public/images/uploads/posts/posts/.gitkeep

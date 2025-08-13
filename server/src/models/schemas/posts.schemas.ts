@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { ImageType } from '~/interfaces/image.interfaces'
 import { PostType } from '~/interfaces/posts.interfaces'
 
 export default class Post {
@@ -11,6 +12,7 @@ export default class Post {
   user_id: ObjectId
   read_time: string
   is_featured: boolean
+  thumbnail: ImageType
   is_deleted: boolean
   created_at: Date
   updated_at: Date
@@ -28,6 +30,7 @@ export default class Post {
     this.user_id = post.user_id
     this.read_time = post.read_time
     this.is_featured = post.is_featured
+    this.thumbnail = post.thumbnail
     this.is_deleted = post.is_deleted || false
     this.created_at = post.created_at || date
     this.updated_at = post.updated_at || date
