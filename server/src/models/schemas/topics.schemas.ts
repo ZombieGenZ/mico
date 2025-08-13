@@ -1,14 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-interface TopicType {
-  _id?: ObjectId
-  name: string
-  index: number
-  is_deleted?: boolean
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date
-}
+import { TopicType } from '~/interfaces/topics.interfaces'
 
 export default class Topic {
   _id: ObjectId

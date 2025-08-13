@@ -1,13 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-interface UserType {
-  _id?: ObjectId
-  name: string
-  email: string
-  password: string
-  created_at?: Date
-  updated_at?: Date
-}
+import { UserType } from '~/interfaces/users.interfaces'
 
 export default class User {
   _id: ObjectId

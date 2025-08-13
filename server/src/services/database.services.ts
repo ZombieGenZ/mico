@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 import User from '~/models/schemas/users.schemas'
 import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import Category from '~/models/schemas/categories.schemas'
+import Product from '~/models/schemas/products.shemas'
+import Post from '~/models/schemas/posts.schemas'
 
 dotenv.config()
 
@@ -42,6 +44,12 @@ class DatabaseService {
   }
   get brands(): Collection<Category> {
     return this.db.collection(process.env.DATABASE_BRAND_COLLECTION as string)
+  }
+  get products(): Collection<Product> {
+    return this.db.collection(process.env.DATABASE_PRODUCT_COLLECTION as string)
+  }
+  get posts(): Collection<Post> {
+    return this.db.collection(process.env.DATABASE_POST_COLLECTION as string)
   }
 }
 

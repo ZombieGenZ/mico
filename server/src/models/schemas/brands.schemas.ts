@@ -1,14 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-interface BrandType {
-  _id?: ObjectId
-  name: string
-  index: number
-  is_deleted?: boolean
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date
-}
+import { BrandType } from '~/interfaces/brands.interfaces'
 
 export default class Brand {
   _id: ObjectId
