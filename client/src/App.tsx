@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import LottieLoader from './components/loading/LottieLoader';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -30,13 +31,26 @@ import AdminSettings from './pages/admin/Settings';
 import { ROUTES } from './lib/constants';
 
 function App() {
+  const [appLoading, setAppLoading] = React.useState(true);
+  
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true,
       offset: 100,
     });
+    
+    // Simulate app initialization
+    const timer = setTimeout(() => {
+      setAppLoading(false);
+    }, 4500);
+    
+    return () => clearTimeout(timer);
   }, []);
+  
+  if (appLoading) {
+    return <LottieLoader onComplete={() => setAppLoading(false)} duration={6000} />;
+  }
 
   return (
     <Router>

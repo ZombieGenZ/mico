@@ -9,9 +9,16 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { dashboardStats } from '../../lib/mockData';
+import LottieLoader from '../../components/loading/LottieLoader';
 import Card from '../../components/ui/Card';
 
 const Dashboard: React.FC = () => {
+  const [loading, setLoading] = React.useState(true);
+  
+  if (loading) {
+    return <LottieLoader onComplete={() => setLoading(false)} duration={3000} />;
+  }
+  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
