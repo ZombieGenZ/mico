@@ -13,7 +13,7 @@ export const getTopicController = async (req: Request, res: Response) => {
       message: TOPIC_MESSAGE.GET_TOPIC_SUCCESS,
       data: await topicService.get()
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_TOPIC_FAILED,
       message: TOPIC_MESSAGE.GET_TOPIC_FAILURE
@@ -29,7 +29,7 @@ export const createTopicController = async (req: Request<ParamsDictionary, any, 
       code: RESPONSE_CODE.CREATE_TOPIC_SUCCESSFUL,
       message: TOPIC_MESSAGE.CREATE_TOPIC_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.CREATE_TOPIC_FAILED,
       message: TOPIC_MESSAGE.CREATE_TOPIC_FAILURE
@@ -47,7 +47,7 @@ export const updateTopicController = async (req: Request<ParamsDictionary, any, 
       code: RESPONSE_CODE.UPDATE_TOPIC_SUCCESSFUL,
       message: TOPIC_MESSAGE.UPDATE_TOPIC_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.UPDATE_TOPIC_FAILED,
       message: TOPIC_MESSAGE.UPDATE_TOPIC_FAILURE
@@ -65,7 +65,7 @@ export const deleteTopicController = async (req: Request, res: Response) => {
       code: RESPONSE_CODE.DELETE_TOPIC_SUCCESSFUL,
       message: TOPIC_MESSAGE.DELETE_TOPIC_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.DELETE_TOPIC_FAILED,
       message: TOPIC_MESSAGE.DELETE_TOPIC_FAILURE

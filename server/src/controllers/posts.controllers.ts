@@ -16,7 +16,7 @@ export const getPostController = async (req: Request, res: Response) => {
       message: POST_MESSAGE.GET_POST_SUCCESS,
       data: await postService.get()
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_POST_FAILED,
       message: POST_MESSAGE.GET_POST_FAILURE
@@ -36,7 +36,7 @@ export const createPostController = async (req: Request<ParamsDictionary, any, P
       code: RESPONSE_CODE.CREATE_POST_SUCCESSFUL,
       message: POST_MESSAGE.CREATE_POST_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.CREATE_POST_FAILED,
       message: POST_MESSAGE.CREATE_POST_FAILURE
@@ -60,7 +60,7 @@ export const updatePostController = async (req: Request<ParamsDictionary, any, P
       code: RESPONSE_CODE.UPDATE_POST_SUCCESSFUL,
       message: POST_MESSAGE.UPDATE_POST_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.UPDATE_POST_FAILED,
       message: POST_MESSAGE.UPDATE_POST_FAILURE
@@ -78,7 +78,7 @@ export const deletePostController = async (req: Request, res: Response) => {
       code: RESPONSE_CODE.DELETE_POST_SUCCESSFUL,
       message: POST_MESSAGE.DELETE_POST_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.DELETE_POST_FAILED,
       message: POST_MESSAGE.DELETE_POST_FAILURE

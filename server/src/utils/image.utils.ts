@@ -3,6 +3,8 @@ import multer from 'multer'
 import fse from 'fs-extra'
 import fs from 'fs'
 import path from 'path'
+import { WEBP_CONFIG } from '~/constants/images.constants'
+import sharp from 'sharp'
 
 const storageProduct = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -133,5 +135,32 @@ export const removeUploadedFiles = (req: Request) => {
         ;(fileArray as Express.Multer.File[]).forEach((file) => deleteFile(path.resolve(file.path)))
       })
     }
+  }
+}
+
+export const compressImage = async (
+  inputPath: string,
+  originalFilename: string
+): Promise<{ path: string; filename: string }> => {
+  let sharpInstance = sharp(inputPath)
+
+  const metadata = await sharpInstance.metadata()
+  if (metadata.width && metadata.width > 1920) {
+    sharpInstance = sharpInstance.resize(1920, null, {
+      withoutEnlargement: true,
+      fit: 'inside'
+    })
+  }
+
+  const nameWithoutExt = path.parse(originalFilename).name
+  const webpFilename = `${nameWithoutExt}.webp`
+  const outputDir = path.dirname(inputPath)
+  const outputPath = path.join(outputDir, webpFilename)
+
+  await sharpInstance.webp(WEBP_CONFIG).toFile(outputPath)
+
+  return {
+    path: outputPath,
+    filename: webpFilename
   }
 }

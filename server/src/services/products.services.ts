@@ -65,7 +65,7 @@ class ProductService {
     )
   }
   async update(payload: ProductRequestBody, category: Category, brand: Brand, product: Product, image?: ImageType[]) {
-    const path = await generatePath(payload.title, this)
+    const path = await generatePath(payload.title, this, product.path)
 
     await databaseService.products.updateOne(
       {

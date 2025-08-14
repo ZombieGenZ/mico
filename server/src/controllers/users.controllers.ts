@@ -22,7 +22,7 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
       code: RESPONSE_CODE.REGISTER_SUCCESSFUL,
       message: USER_MESSAGE.REGISTER_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.REGISTER_FAILED,
       message: USER_MESSAGE.REGISTER_FAILURE
@@ -43,7 +43,7 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
         refresh_token: authenticate[1]
       }
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.LOGIN_FAILED,
       message: USER_MESSAGE.LOGIN_FAILURE
@@ -60,7 +60,7 @@ export const logoutController = async (req: Request<ParamsDictionary, any, AuthR
       code: RESPONSE_CODE.LOGOUT_SUCCESSFUL,
       message: USER_MESSAGE.LOGOUT_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.LOGOUT_FAILED,
       message: USER_MESSAGE.LOGIN_FAILURE
@@ -171,7 +171,7 @@ export const infomationController = async (req: Request, res: Response) => {
       message: USER_MESSAGE.GET_USER_INFOMATION_SUCCESS,
       infomation: omit(user, ['password'])
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_USER_INFOMATION_FAILED,
       message: USER_MESSAGE.GET_USER_INFOMATION_FAILURE

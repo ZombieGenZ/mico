@@ -9,7 +9,7 @@ import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
 import fs from 'fs'
 import { ImageType } from '~/interfaces/image.interfaces'
-import { removeUploadedFiles } from '~/utils/image.utils'
+import { compressImage, removeUploadedFiles } from '~/utils/image.utils'
 
 export const setupUploadPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -31,18 +31,69 @@ export const setupUploadPost = async (req: Request, res: Response, next: NextFun
     }
 
     try {
-      fs.renameSync(image.path, path.join(directoryPath, image.filename))
+      const compressed = await compressImage(image.path, image.filename)
+
+      const finalPath = path.join(directoryPath, compressed.filename)
+      fs.renameSync(compressed.path, finalPath)
+
+      if (fs.existsSync(image.path)) {
+        fs.unlinkSync(image.path)
+      }
+
+      const img: ImageType = {
+        name: compressed.filename,
+        path: `../../public/images/uploads/posts/${user._id}/${compressed.filename}`,
+        url: `${process.env.IMAGE_URL}/images/uploads/posts/${user._id}/${compressed.filename}`
+      }
+
+      req.image = img
+    } catch (err) {
+      return next(err)
+    }
+    next()
+  } catch (error) {
+    await removeUploadedFiles(req)
+    next(error)
+  }
+}
+
+export const setupUploadPostOptional = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user as User
+    const image = req.file as Express.Multer.File
+
+    if (!image) {
+      next()
+      return
+    }
+
+    const directoryPath = path.join(__dirname, `../../public/images/uploads/posts/${user._id}`)
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true })
+    }
+
+    try {
+      const compressed = await compressImage(image.path, image.filename)
+
+      const finalPath = path.join(directoryPath, compressed.filename)
+      fs.renameSync(compressed.path, finalPath)
+
+      if (fs.existsSync(image.path)) {
+        fs.unlinkSync(image.path)
+      }
+
+      const img: ImageType = {
+        name: compressed.filename,
+        path: `../../public/images/uploads/posts/${user._id}/${compressed.filename}`,
+        url: `${process.env.IMAGE_URL}/images/uploads/posts/${user._id}/${compressed.filename}`
+      }
+
+      req.image = img
     } catch (err) {
       return next(err)
     }
 
-    const img: ImageType = {
-      name: image.filename,
-      path: `../../public/images/uploads/posts/${user._id}/${image.filename}`,
-      url: `${process.env.IMAGE_URL}/images/uploads/posts/${user._id}/${image.filename}`
-    }
-
-    req.image = img
     next()
   } catch (error) {
     await removeUploadedFiles(req)

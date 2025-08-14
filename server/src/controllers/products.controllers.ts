@@ -16,7 +16,7 @@ export const getProductController = async (req: Request, res: Response) => {
       message: PRODUCT_MESSAGE.GET_PRODUCT_SUCCESS,
       data: await productService.get()
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_PRODUCT_FAILED,
       message: PRODUCT_MESSAGE.GET_PRODUCT_FAILURE
@@ -39,7 +39,7 @@ export const createProductController = async (
       code: RESPONSE_CODE.CREATE_PRODUCT_SUCCESSFUL,
       message: PRODUCT_MESSAGE.CREATE_PRODUCT_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.CREATE_PRODUCT_FAILED,
       message: PRODUCT_MESSAGE.CREATE_PRODUCT_FAILURE
@@ -67,7 +67,7 @@ export const updateProductController = async (
       code: RESPONSE_CODE.UPDATE_PRODUCT_SUCCESSFUL,
       message: PRODUCT_MESSAGE.UPDATE_PRODUCT_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.UPDATE_PRODUCT_FAILED,
       message: PRODUCT_MESSAGE.UPDATE_PRODUCT_FAILURE
@@ -85,7 +85,7 @@ export const deleteProductController = async (req: Request, res: Response) => {
       code: RESPONSE_CODE.DELETE_PRODUCT_SUCCESSFUL,
       message: PRODUCT_MESSAGE.DELETE_PRODUCT_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.DELETE_PRODUCT_FAILED,
       message: PRODUCT_MESSAGE.DELETE_PRODUCT_FAILURE

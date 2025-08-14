@@ -6,7 +6,12 @@ import {
   updatePostController
 } from '~/controllers/posts.controllers'
 import { accessTokenValidator } from '~/middlewares/authenticate.middlewares'
-import { postIdValidator, postValidator, setupUploadPost } from '~/middlewares/posts.middlewares'
+import {
+  postIdValidator,
+  postValidator,
+  setupUploadPost,
+  setupUploadPostOptional
+} from '~/middlewares/posts.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers.utils'
 import { uploadPost } from '~/utils/image.utils'
 const router = express.Router()
@@ -65,7 +70,7 @@ router.put(
   accessTokenValidator,
   postIdValidator,
   postValidator,
-  setupUploadPost,
+  setupUploadPostOptional,
   wrapRequestHandler(updatePostController)
 )
 

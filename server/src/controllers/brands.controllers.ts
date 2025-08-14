@@ -13,7 +13,7 @@ export const getBrandController = async (req: Request, res: Response) => {
       message: BRAND_MESSAGE.GET_BRAND_SUCCESS,
       data: await brandService.get()
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_BRAND_FAILED,
       message: BRAND_MESSAGE.GET_BRAND_FAILURE
@@ -29,7 +29,7 @@ export const createBrandController = async (req: Request<ParamsDictionary, any, 
       code: RESPONSE_CODE.CREATE_BRAND_SUCCESSFUL,
       message: BRAND_MESSAGE.CREATE_BRAND_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.CREATE_BRAND_FAILED,
       message: BRAND_MESSAGE.CREATE_BRAND_FAILURE
@@ -47,7 +47,7 @@ export const updateBrandController = async (req: Request<ParamsDictionary, any, 
       code: RESPONSE_CODE.UPDATE_BRAND_SUCCESSFUL,
       message: BRAND_MESSAGE.UPDATE_BRAND_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.UPDATE_BRAND_FAILED,
       message: BRAND_MESSAGE.UPDATE_BRAND_FAILURE
@@ -65,7 +65,7 @@ export const deleteBrandController = async (req: Request, res: Response) => {
       code: RESPONSE_CODE.DELETE_BRAND_SUCCESSFUL,
       message: BRAND_MESSAGE.DELETE_BRAND_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.DELETE_BRAND_FAILED,
       message: BRAND_MESSAGE.DELETE_BRAND_FAILURE

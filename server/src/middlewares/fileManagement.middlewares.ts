@@ -6,7 +6,7 @@ import fs from 'fs'
 import { FILE_MANAGEMENT_MESSAGE } from '~/constants/message.constants'
 import User from '~/models/schemas/users.schemas'
 import { ImageType } from '~/interfaces/image.interfaces'
-import { removeUploadedFiles } from '~/utils/image.utils'
+import { compressImage, removeUploadedFiles } from '~/utils/image.utils'
 
 export const setupUploadImage = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,18 +28,26 @@ export const setupUploadImage = async (req: Request, res: Response, next: NextFu
     }
 
     try {
-      fs.renameSync(image.path, path.join(directoryPath, image.filename))
+      const compressed = await compressImage(image.path, image.filename)
+
+      const finalPath = path.join(directoryPath, compressed.filename)
+      fs.renameSync(compressed.path, finalPath)
+
+      if (fs.existsSync(image.path)) {
+        fs.unlinkSync(image.path)
+      }
+
+      const img: ImageType = {
+        name: compressed.filename,
+        path: `../../public/images/uploads/posts/posts/${user._id}/${compressed.filename}`,
+        url: `${process.env.IMAGE_URL}/images/uploads/posts/posts/${user._id}/${compressed.filename}`
+      }
+
+      req.image = img
     } catch (err) {
       return next(err)
     }
 
-    const img: ImageType = {
-      name: image.filename,
-      path: `../../public/images/uploads/posts/posts/${user._id}/${image.filename}`,
-      url: `${process.env.IMAGE_URL}/images/uploads/posts/posts/${user._id}/${image.filename}`
-    }
-
-    req.image = img
     next()
   } catch (error) {
     await removeUploadedFiles(req)

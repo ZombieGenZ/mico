@@ -62,7 +62,7 @@ class PostService {
     )
   }
   async update(payload: PostRequestBody, topic: Topic, post: Post, image?: ImageType) {
-    const path = await generatePath(payload.title, this)
+    const path = await generatePath(payload.title, this, post.path)
     const readTime = readingTimeLabel(payload.content)
 
     await databaseService.posts.updateOne(

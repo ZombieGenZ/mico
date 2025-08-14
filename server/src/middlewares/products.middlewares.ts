@@ -9,7 +9,7 @@ import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
 import fs from 'fs'
 import { ImageType } from '~/interfaces/image.interfaces'
-import { removeUploadedFiles } from '~/utils/image.utils'
+import { compressImage, removeUploadedFiles } from '~/utils/image.utils'
 
 export const setupUploadProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -33,12 +33,19 @@ export const setupUploadProduct = async (req: Request, res: Response, next: Next
 
     for (const image of images) {
       try {
-        fs.renameSync(image.path, path.join(directoryPath, image.filename))
+        const compressed = await compressImage(image.path, image.filename)
+
+        const finalPath = path.join(directoryPath, compressed.filename)
+        fs.renameSync(compressed.path, finalPath)
+
+        if (fs.existsSync(image.path)) {
+          fs.unlinkSync(image.path)
+        }
 
         imgList.push({
-          name: image.filename,
-          path: `../../public/images/uploads/products/${user._id}/${image.filename}`,
-          url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${image.filename}`
+          name: compressed.filename,
+          path: `../../public/images/uploads/products/${user._id}/${compressed.filename}`,
+          url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${compressed.filename}`
         })
       } catch (err) {
         return next(err)
@@ -73,12 +80,19 @@ export const setupUploadProductOptional = async (req: Request, res: Response, ne
 
     for (const image of images) {
       try {
-        fs.renameSync(image.path, path.join(directoryPath, image.filename))
+        const compressed = await compressImage(image.path, image.filename)
+
+        const finalPath = path.join(directoryPath, compressed.filename)
+        fs.renameSync(compressed.path, finalPath)
+
+        if (fs.existsSync(image.path)) {
+          fs.unlinkSync(image.path)
+        }
 
         imgList.push({
-          name: image.filename,
-          path: `../../public/images/uploads/products/${user._id}/${image.filename}`,
-          url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${image.filename}`
+          name: compressed.filename,
+          path: `../../public/images/uploads/products/${user._id}/${compressed.filename}`,
+          url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${compressed.filename}`
         })
       } catch (err) {
         return next(err)

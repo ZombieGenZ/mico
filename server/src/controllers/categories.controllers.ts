@@ -13,7 +13,7 @@ export const getCategoryController = async (req: Request, res: Response) => {
       message: CATEGORY_MESSAGE.GET_CATEGORY_SUCCESS,
       data: await categoryService.get()
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.GET_CATEGORY_FAILED,
       message: CATEGORY_MESSAGE.GET_CATEGORY_FAILURE
@@ -32,7 +32,7 @@ export const createCategoryController = async (
       code: RESPONSE_CODE.CREATE_CATEGORY_SUCCESSFUL,
       message: CATEGORY_MESSAGE.CREATE_CATEGORY_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.CREATE_CATEGORY_FAILED,
       message: CATEGORY_MESSAGE.CREATE_CATEGORY_FAILURE
@@ -53,7 +53,7 @@ export const updateCategoryController = async (
       code: RESPONSE_CODE.UPDATE_CATEGORY_SUCCESSFUL,
       message: CATEGORY_MESSAGE.UPDATE_CATEGORY_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.UPDATE_CATEGORY_FAILED,
       message: CATEGORY_MESSAGE.UPDATE_CATEGORY_FAILURE
@@ -71,7 +71,7 @@ export const deleteCategoryController = async (req: Request, res: Response) => {
       code: RESPONSE_CODE.DELETE_CATEGORY_SUCCESSFUL,
       message: CATEGORY_MESSAGE.DELETE_CATEGORY_SUCCESS
     })
-  } catch (err: unknown) {
+  } catch {
     res.json({
       code: RESPONSE_CODE.DELETE_CATEGORY_FAILED,
       message: CATEGORY_MESSAGE.DELETE_CATEGORY_FAILURE
