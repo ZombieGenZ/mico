@@ -8,6 +8,7 @@ import Brand from './models/schemas/brands.schemas'
 import Product from './models/schemas/products.shemas'
 import Post from './models/schemas/posts.schemas'
 import { ImageType } from './interfaces/image.interfaces'
+import Contact from './models/schemas/contacts.schemas'
 
 declare module 'express' {
   interface Request {
@@ -19,5 +20,6 @@ declare module 'express' {
     product?: Product
     post?: Post
     image?: ImageType | ImageType[]
+    contact?: Contact
   }
 }

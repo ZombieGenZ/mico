@@ -205,3 +205,35 @@ export const FILE_MANAGEMENT_MESSAGE = {
   UPLOAD_IMAGE_SUCCESS: 'Tải lên hình ảnh thành công',
   UPLOAD_IMAGE_FAILURE: 'Tải lên hình ảnh thất bại'
 } as const
+
+export const CONTACT_MESSAGE = {
+  GET_CONTACT_SUCCESS: 'Lấy thông tin liên hệ thành công',
+  GET_CONTACT_FAILURE: 'Lấy thông tin liên hệ thất bại',
+  CONTACT_SUCCESS: 'Để lại thông tin liên hệ thành công',
+  CONTACT_FAILURE: 'Để lại thông tin liên hệ thất bại',
+  COMPLETE_CONTACT_SUCCESS: 'Hoàn thành liên hệ thành công',
+  COMPLETE_CONTACT_FAILURE: 'Hoàn thành liên hệ thất bại',
+  NAME_IS_REQUIRED: 'Không được bỏ trống tên của bạn',
+  NAME_MUST_BE_A_STRING: 'Tên của bạn phải là chuỗi ký tự',
+  NAME_LENGTH_MUST_BE_FROM_1_TO_50: 'Tên của bạn phải có độ dài từ 1 đến 50 ký tự',
+  EMAIL_IS_REQUIRED: 'Không được bỏ trống địa chỉ email',
+  EMAIL_MUST_BE_A_STRING: 'Địa chỉ email phải là một chuỗi ký tự',
+  EMAIL_LENGTH_MUST_BE_FROM_5_TO_100: 'Địa chỉ email phải có độ dài từ 5 đến 100 ký tự',
+  EMAIL_IS_NOT_VALID: 'Địa chỉ email không đúng định dạng',
+  PHONE_IS_REQUIRED: 'Không được bỏ trống số điện thoại',
+  PHONE_MUST_BE_A_STRING: 'Số điện thoại phải là một chuỗi ký tự',
+  PHONE_LENGTH_MUST_BE_FROM_10_TO_11: 'Số điện thoại phải có độ dài từ 10 đến 11 ký tự',
+  PHONE_IS_NOT_VALID: 'Số điện thoại không hợp lệ',
+  COMPANY_MUST_BE_A_STRING: 'Tên công ty phải là chuỗi ký tự',
+  COMPANY_LENGTH_MUST_BE_FROM_1_TO_150: 'Tên công ty phải có độ dài từ 1 đến 150 ký tự',
+  TITLE_IS_REQUIRED: 'Không được bỏ trống tiêu đề tin nhắn',
+  TITLE_MUST_BE_A_STRING: 'Tiêu đề tin nhắn phải là một chuỗi ký tự',
+  TITLE_LENGTH_MUST_BE_FROM_1_TO_150: 'Tiêu đề tin nhắn phải có độ dài từ 1 đến 150 ký tự',
+  CONTENT_IS_REQUIRED: 'Không được bỏ trống Nội dung tinh nhắn',
+  CONTENT_MUST_BE_A_STRING: 'Nội dung tinh nhắn phải là một chuỗi ký tự',
+  CONTENT_LENGTH_MUST_BE_FROM_1_TO_1000: 'Nội dung tinh nhắn phải có độ dài từ 1 đến 1000 ký tự',
+  CONTACT_ID_IS_REQUIRED: 'Không được bỏ trống ID liên hệ',
+  CONTACT_ID_MUST_BE_A_STRING: 'ID liên hệ phải là một chuỗi ký tự',
+  CONTACT_ID_IS_MUST_BE_A_ID: 'ID liên hệ không đúng định dạng',
+  CONTACT_ID_DOES_NOT_EXIST: 'ID liên hệ không tồn tại'
+} as const

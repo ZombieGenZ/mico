@@ -5,6 +5,7 @@ import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import Category from '~/models/schemas/categories.schemas'
 import Product from '~/models/schemas/products.shemas'
 import Post from '~/models/schemas/posts.schemas'
+import Contact from '~/models/schemas/contacts.schemas'
 
 dotenv.config()
 
@@ -50,6 +51,9 @@ class DatabaseService {
   }
   get posts(): Collection<Post> {
     return this.db.collection(process.env.DATABASE_POST_COLLECTION as string)
+  }
+  get contacts(): Collection<Contact> {
+    return this.db.collection(process.env.DATABASE_CONTACT_COLLECTION as string)
   }
 }
 
