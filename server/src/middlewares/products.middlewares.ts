@@ -218,43 +218,6 @@ export const productValidator = async (req: Request, res: Response, next: NextFu
           errorMessage: PRODUCT_MESSAGE.FEATURES_INDEX_MUST_BE_A_NUMBER
         }
       },
-      price: {
-        custom: {
-          options: (value) => {
-            if (value === '' || value === undefined || value === null) {
-              throw new Error(PRODUCT_MESSAGE.PRICE_IS_REQUIRED)
-            }
-            return true
-          }
-        },
-        isFloat: {
-          options: { min: 0 },
-          errorMessage: PRODUCT_MESSAGE.PRICE_MUST_BE_NUMBER_AND_GTE_0
-        },
-        toFloat: true
-      },
-      rent: {
-        in: ['body'],
-        custom: {
-          options: (value) => {
-            if (value === '' || value === undefined || value === null) {
-              throw new Error(PRODUCT_MESSAGE.RENT_IS_REQUIRED)
-            }
-            return true
-          }
-        },
-        isFloat: {
-          options: { min: 0 },
-          errorMessage: PRODUCT_MESSAGE.RENT_MUST_BE_NUMBER_AND_GTE_0
-        },
-        toFloat: true
-      },
-      rent_by: {
-        in: ['body'],
-        notEmpty: { errorMessage: PRODUCT_MESSAGE.RENT_BY_IS_REQUIRED },
-        trim: true,
-        isString: { errorMessage: PRODUCT_MESSAGE.RENT_BY_MUST_BE_A_STRING }
-      },
       category_id: {
         notEmpty: {
           errorMessage: PRODUCT_MESSAGE.CATEGORY_ID_IS_REQUIRED

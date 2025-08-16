@@ -43,9 +43,6 @@ router.get('/', wrapRequestHandler(getProductController))
  *      value: string
  *      index: number
  *    }[]
- *    price: number
- *    rent: number
- *    rent_by: string
  *    category_id: string
  *    brand_id: string
  *    in_stock: boolean
@@ -83,9 +80,6 @@ router.post(
  *      value: string
  *      index: number
  *    }[]
- *    price: number
- *    rent: number
- *    rent_by: string
  *    category_id: string
  *    brand_id: string
  *    in_stock: boolean

@@ -6,9 +6,6 @@ export interface ProductRequestBody {
   subtitle: string
   technical_information: TechnicalInformationType[]
   features: Features[]
-  price: number
-  rent: number
-  rent_by: string
   category_id: string
   brand_id: string
   in_stock: boolean
