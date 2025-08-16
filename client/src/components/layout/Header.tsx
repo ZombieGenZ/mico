@@ -5,35 +5,21 @@ import { Menu, X, Phone, Mail, MapPin, User, LogOut } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import { useAuthStore } from '../../stores/authStore';
 import Button from '../ui/Button';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
   
-  // Initialize AOS một lần duy nhất khi component mount
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      easing: 'ease-in-out-cubic',
-      once: true, // Chỉ animate một lần
-      mirror: false,
-      offset: 100,
-      delay: 0,
-    });
-    
-    // Refresh AOS khi component mount để đảm bảo detect được các elements
-    setTimeout(() => {
-      AOS.refresh();
-    }, 100);
-  }, []); // Chỉ chạy một lần khi mount
-  
   // Đóng mobile menu khi route thay đổi
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
+  
+  // Đóng menu khi click vào nav item
+  const handleNavClick = () => {
+    setIsOpen(false);
+  };
   
   const navigation = [
     { name: 'Trang chủ', href: ROUTES.HOME },
@@ -47,148 +33,200 @@ const Header: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <header className="bg-slate-900 text-white shadow-xl relative z-50 sticky top-0">
+    <motion.header 
+      className="bg-slate-900 text-white shadow-xl relative z-50 sticky top-0"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       {/* Top Bar */}
-      <div 
+      <motion.div 
         className="bg-slate-800 py-2"
-        data-aos="fade-down"
-        data-aos-delay="0"
-        data-aos-duration="800"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
       >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center space-x-6">
-              <div 
+              <motion.div 
                 className="flex items-center space-x-1"
-                data-aos="fade-right"
-                data-aos-delay="200"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ scale: 1.05 }}
               >
                 <Phone className="h-3 w-3 text-yellow-400" />
                 <span>0123.456.789</span>
-              </div>
-              <div 
+              </motion.div>
+              <motion.div 
                 className="flex items-center space-x-1"
-                data-aos="fade-right"
-                data-aos-delay="300"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                whileHover={{ scale: 1.05 }}
               >
                 <Mail className="h-3 w-3 text-yellow-400" />
                 <span>info@xecongtrinhvn.com</span>
-              </div>
-              <div 
+              </motion.div>
+              <motion.div 
                 className="flex items-center space-x-1"
-                data-aos="fade-right"
-                data-aos-delay="400"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                whileHover={{ scale: 1.05 }}
               >
                 <MapPin className="h-3 w-3 text-yellow-400" />
                 <span>TP. Hồ Chí Minh</span>
-              </div>
+              </motion.div>
             </div>
             {isAuthenticated ? (
-              <div 
+              <motion.div 
                 className="flex items-center space-x-4"
-                data-aos="fade-left"
-                data-aos-delay="500"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <Link to={ROUTES.ADMIN_DASHBOARD} className="flex items-center space-x-1 hover:text-yellow-400 transition-colors">
                   <User className="h-3 w-3" />
                   <span>{user?.name}</span>
                 </Link>
-                <button
+                <motion.button
                   onClick={logout}
                   className="flex items-center space-x-1 hover:text-yellow-400 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <LogOut className="h-3 w-3" />
                   <span>Đăng xuất</span>
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             ) : (
-              <div 
-                data-aos="fade-left"
-                data-aos-delay="500"
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <Link to={ROUTES.LOGIN} className="hover:text-yellow-400 transition-colors">
-                  Đăng nhập
-                </Link>
-              </div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link to={ROUTES.LOGIN} className="hover:text-yellow-400 transition-colors">
+                    Đăng nhập
+                  </Link>
+                </motion.div>
+              </motion.div>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
       
       {/* Main Header */}
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link 
-            to={ROUTES.HOME} 
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-            data-aos="fade-right"
-            data-aos-delay="600"
-            data-aos-duration="1000"
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="bg-yellow-400 text-slate-900 p-2 rounded-lg">
-              <span className="font-bold text-xl">XE</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-yellow-400">XE CÔNG TRÌNH VN</h1>
-              <p className="text-xs text-gray-400">Đại lý xe công trình uy tín</p>
-            </div>
-          </Link>
+            <Link 
+              to={ROUTES.HOME} 
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
+              <motion.div 
+                className="bg-yellow-400 text-slate-900 p-2 rounded-lg"
+                whileHover={{ 
+                  scale: 1.1,
+                  rotate: 5,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="font-bold text-xl">XE</span>
+              </motion.div>
+              <div>
+                <motion.h1 
+                  className="text-xl font-bold text-yellow-400"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  XE CÔNG TRÌNH VN
+                </motion.h1>
+                <p className="text-xs text-gray-400">Đại lý xe công trình uy tín</p>
+              </div>
+            </Link>
+          </motion.div>
           
           {/* Desktop Navigation */}
-          <nav 
-            className="hidden lg:flex items-center space-x-8"
-            data-aos="fade-down"
-            data-aos-delay="800"
-            data-aos-duration="1200"
-          >
+          <nav className="hidden lg:flex items-center space-x-8">
             {navigation.map((item, index) => (
-              <Link
+              <motion.div
                 key={item.name}
-                to={item.href}
-                className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
-                  isActive(item.href)
-                    ? 'text-yellow-400'
-                    : 'text-white hover:text-yellow-400'
-                }`}
-                data-aos="fade-down"
-                data-aos-delay={900 + (index * 100)} // Staggered animation cho từng nav item
-                data-aos-duration="600"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: 0.5 + (index * 0.1) 
+                }}
+                whileHover={{ 
+                  scale: 1.1,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
               >
-                {item.name}
-                {isActive(item.href) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-400 rounded-full"
-                    initial={false}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  />
-                )}
-              </Link>
+                <Link
+                  to={item.href}
+                  onClick={handleNavClick}
+                  className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                    isActive(item.href)
+                      ? 'text-yellow-400'
+                      : 'text-white hover:text-yellow-400'
+                  }`}
+                >
+                  {item.name}
+                  {isActive(item.href) && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-400 rounded-full"
+                      initial={false}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             ))}
           </nav>
           
           {/* CTA Button */}
-          <div 
+          <motion.div 
             className="hidden lg:flex items-center space-x-4"
-            data-aos="fade-left"
-            data-aos-delay="1200"
-            data-aos-duration="800"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
           >
             <Link to={ROUTES.QUOTE}>
-              <Button variant="primary" size="md" className="transform hover:scale-105 transition-transform duration-200">
-                Yêu cầu báo giá
-              </Button>
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button variant="primary" size="md" className="transform transition-transform duration-200">
+                  Yêu cầu báo giá
+                </Button>
+              </motion.div>
             </Link>
-          </div>
+          </motion.div>
           
           {/* Mobile menu button */}
-          <button
+          <motion.button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 hover:bg-slate-700 rounded-lg transition-colors"
             aria-label="Toggle menu"
-            data-aos="fade-left"
-            data-aos-delay="700"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             <motion.div
               animate={{ rotate: isOpen ? 180 : 0 }}
@@ -196,7 +234,7 @@ const Header: React.FC = () => {
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </motion.div>
-          </button>
+          </motion.button>
         </div>
       </div>
       
@@ -228,53 +266,53 @@ const Header: React.FC = () => {
                 <motion.div
                   key={item.name}
                   initial={{ opacity: 0, x: -20 }}
-                  animate={{ 
-                    opacity: 1, 
-                    x: 0,
-                    transition: { 
-                      delay: index * 0.1,
-                      duration: 0.3
-                    }
-                  }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.3 }}
                   exit={{ opacity: 0, x: -20 }}
                 >
-                  <Link
-                    to={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg ${
-                      isActive(item.href)
-                        ? 'text-yellow-400 bg-slate-700 shadow-inner'
-                        : 'text-white hover:text-yellow-400 hover:bg-slate-700 hover:translate-x-1'
-                    }`}
+                  <motion.div
+                    whileHover={{ 
+                      x: 8,
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    {item.name}
-                  </Link>
+                    <Link
+                      to={item.href}
+                      className={`block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg ${
+                        isActive(item.href)
+                          ? 'text-yellow-400 bg-slate-700 shadow-inner'
+                          : 'text-white hover:text-yellow-400 hover:bg-slate-700'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
                 </motion.div>
               ))}
               <motion.div 
                 className="pt-4 border-t border-slate-700"
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0,
-                  transition: { 
-                    delay: navigation.length * 0.1,
-                    duration: 0.3
-                  }
-                }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navigation.length * 0.1, duration: 0.3 }}
                 exit={{ opacity: 0, y: 20 }}
               >
-                <Link to={ROUTES.QUOTE} onClick={() => setIsOpen(false)}>
-                  <Button variant="primary" size="md" className="w-full">
-                    Yêu cầu báo giá
-                  </Button>
+                <Link to={ROUTES.QUOTE}> 
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button variant="primary" size="md" className="w-full">
+                      Yêu cầu báo giá
+                    </Button>
+                  </motion.div>
                 </Link>
               </motion.div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };
 
