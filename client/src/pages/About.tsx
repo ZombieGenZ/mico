@@ -71,7 +71,7 @@ const About: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-slate-900 text-white py-20">
+      <section className="bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 text-white py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -80,9 +80,9 @@ const About: React.FC = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Về <span className="text-yellow-400">chúng tôi</span>
+              Về <span className="text-yellow-200">chúng tôi</span>
             </h1>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-orange-100 mb-8">
               Hơn 15 năm kinh nghiệm trong lĩnh vực cung cấp và cho thuê xe công trình
             </p>
           </motion.div>
@@ -105,8 +105,8 @@ const About: React.FC = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <Card className="text-center">
-                    <div className="bg-yellow-400 w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                      <IconComponent className="h-8 w-8 text-slate-900" />
+                    <div className="bg-gradient-to-br from-yellow-400 to-orange-400 w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+                      <IconComponent className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-3xl font-bold text-slate-900 mb-2">
                       {stat.number}
@@ -163,7 +163,7 @@ const About: React.FC = () => {
                 alt="Về chúng tôi"
                 className="rounded-2xl shadow-2xl"
               />
-              <div className="absolute -bottom-6 -left-6 bg-yellow-400 text-slate-900 p-6 rounded-2xl">
+              <div className="absolute -bottom-6 -left-6 bg-gradient-to-br from-yellow-400 to-orange-400 text-white p-6 rounded-2xl shadow-lg">
                 <p className="text-2xl font-bold">15+</p>
                 <p className="text-sm font-semibold">Năm kinh nghiệm</p>
               </div>
@@ -173,7 +173,7 @@ const About: React.FC = () => {
       </section>
       
       {/* Values Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gradient-to-br from-yellow-50 to-orange-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -202,9 +202,9 @@ const About: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <Card className="text-center h-full">
-                    <div className="bg-yellow-100 w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                      <IconComponent className="h-8 w-8 text-yellow-600" />
+                  <Card className="text-center h-full hover:shadow-lg transition-shadow duration-300">
+                    <div className="bg-gradient-to-br from-yellow-100 to-orange-100 w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                      <IconComponent className="h-8 w-8 text-orange-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-4">
                       {value.title}
@@ -247,16 +247,16 @@ const About: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="text-center">
+                <Card className="text-center hover:shadow-lg transition-shadow duration-300">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-32 h-32 rounded-full mx-auto mb-6 object-cover"
+                    className="w-32 h-32 rounded-full mx-auto mb-6 object-cover border-4 border-gradient-to-br from-yellow-400 to-orange-400"
                   />
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
                     {member.name}
                   </h3>
-                  <p className="text-yellow-500 font-semibold mb-2">
+                  <p className="text-orange-500 font-semibold mb-2">
                     {member.position}
                   </p>
                   <p className="text-gray-600 text-sm">
@@ -270,7 +270,7 @@ const About: React.FC = () => {
       </section>
       
       {/* Achievements Section */}
-      <section className="py-20 bg-slate-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-gray-900 text-white">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -280,7 +280,7 @@ const About: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold mb-4">
-              Thành tựu <span className="text-yellow-400">nổi bật</span>
+              Thành tựu <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text">nổi bật</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Những dấu mốc quan trọng trong hành trình phát triển
@@ -296,10 +296,10 @@ const About: React.FC = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="flex items-center space-x-4 bg-slate-800 p-4 rounded-lg"
+                  className="flex items-center space-x-4 bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg border border-gray-700"
                 >
-                  <div className="bg-yellow-400 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-slate-900" />
+                  <div className="bg-gradient-to-br from-yellow-400 to-orange-400 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
                   </div>
                   <p className="text-lg">{achievement}</p>
                 </motion.div>
@@ -310,7 +310,7 @@ const About: React.FC = () => {
       </section>
       
       {/* Testimonials */}
-      <section className="py-20 bg-yellow-400">
+      <section className="py-20 bg-gradient-to-br from-yellow-400 via-yellow-300 to-orange-400">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -355,14 +355,14 @@ const About: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="bg-white">
+                <Card className="bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-300">
                   <div className="flex items-center space-x-1 mb-4">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star 
                         key={star} 
                         className={`h-5 w-5 ${
                           star <= testimonial.rating 
-                            ? 'text-yellow-400 fill-current' 
+                            ? 'text-orange-400 fill-current' 
                             : 'text-gray-300'
                         }`} 
                       />

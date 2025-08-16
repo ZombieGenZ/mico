@@ -34,14 +34,14 @@ const Header: React.FC = () => {
   
   return (
     <motion.header 
-      className="bg-slate-900 text-white shadow-xl relative z-50 sticky top-0"
+      className="bg-gradient-to-r from-primary-800 to-secondary-800 text-white shadow-xl relative z-50 sticky top-0"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       {/* Top Bar */}
       <motion.div 
-        className="bg-slate-800 py-2"
+        className="bg-gradient-to-r from-primary-900 to-secondary-900 py-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Phone className="h-3 w-3 text-yellow-400" />
+                <Phone className="h-3 w-3 text-accent-400" />
                 <span>0123.456.789</span>
               </motion.div>
               <motion.div 
@@ -66,7 +66,7 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Mail className="h-3 w-3 text-yellow-400" />
+                <Mail className="h-3 w-3 text-accent-400" />
                 <span>info@xecongtrinhvn.com</span>
               </motion.div>
               <motion.div 
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.5 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <MapPin className="h-3 w-3 text-yellow-400" />
+                <MapPin className="h-3 w-3 text-accent-400" />
                 <span>TP. Hồ Chí Minh</span>
               </motion.div>
             </div>
@@ -87,13 +87,13 @@ const Header: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <Link to={ROUTES.ADMIN_DASHBOARD} className="flex items-center space-x-1 hover:text-yellow-400 transition-colors">
+                <Link to={ROUTES.ADMIN_DASHBOARD} className="flex items-center space-x-1 hover:text-accent-400 transition-colors">
                   <User className="h-3 w-3" />
                   <span>{user?.name}</span>
                 </Link>
                 <motion.button
                   onClick={logout}
-                  className="flex items-center space-x-1 hover:text-yellow-400 transition-colors"
+                  className="flex items-center space-x-1 hover:text-accent-400 transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -108,7 +108,7 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link to={ROUTES.LOGIN} className="hover:text-yellow-400 transition-colors">
+                  <Link to={ROUTES.LOGIN} className="hover:text-accent-400 transition-colors">
                     Đăng nhập
                   </Link>
                 </motion.div>
@@ -132,7 +132,7 @@ const Header: React.FC = () => {
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
               <motion.div 
-                className="bg-yellow-400 text-slate-900 p-2 rounded-lg"
+                className="bg-gradient-primary text-white p-2 rounded-lg shadow-lg"
                 whileHover={{ 
                   scale: 1.1,
                   rotate: 5,
@@ -144,12 +144,12 @@ const Header: React.FC = () => {
               </motion.div>
               <div>
                 <motion.h1 
-                  className="text-xl font-bold text-yellow-400"
+                  className="text-xl font-bold text-gradient"
                   whileHover={{ scale: 1.05 }}
                 >
                   XE CÔNG TRÌNH VN
                 </motion.h1>
-                <p className="text-xs text-gray-400">Đại lý xe công trình uy tín</p>
+                <p className="text-xs text-primary-200">Đại lý xe công trình uy tín</p>
               </div>
             </Link>
           </motion.div>
@@ -177,15 +177,15 @@ const Header: React.FC = () => {
                   onClick={handleNavClick}
                   className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ${
                     isActive(item.href)
-                      ? 'text-yellow-400'
-                      : 'text-white hover:text-yellow-400'
+                      ? 'text-accent-400'
+                      : 'text-white hover:text-accent-400'
                   }`}
                 >
                   {item.name}
                   {isActive(item.href) && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-400 rounded-full"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-400 rounded-full"
                       initial={false}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                     />
@@ -281,8 +281,8 @@ const Header: React.FC = () => {
                       to={item.href}
                       className={`block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg ${
                         isActive(item.href)
-                          ? 'text-yellow-400 bg-slate-700 shadow-inner'
-                          : 'text-white hover:text-yellow-400 hover:bg-slate-700'
+                          ? 'text-accent-400 bg-primary-800/30 shadow-inner'
+                          : 'text-white hover:text-accent-400 hover:bg-primary-800/20'
                       }`}
                     >
                       {item.name}

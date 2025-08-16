@@ -26,6 +26,8 @@ import AdminCategories from './pages/admin/Categories';
 import AdminNews from './pages/admin/News';
 import AdminQuotes from './pages/admin/Quotes';
 import AdminSettings from './pages/admin/Settings';
+import AdminCustomers from './pages/admin/Customers';
+import AdminReports from './pages/admin/Reports';
 
 // Routes
 import { ROUTES } from './lib/constants';
@@ -203,7 +205,26 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+          <Route
+            path={ROUTES.ADMIN_CUSTOMERS}
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminCustomers />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.ADMIN_REPORTS}
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminReports />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
           {/* Placeholder routes for development */}
         </Routes>
       </div>

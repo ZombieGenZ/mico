@@ -16,6 +16,8 @@ export const ROUTES = {
   ADMIN_QUOTES: '/admin/quotes',
   ADMIN_SETTINGS: '/admin/settings',
   LOGIN: '/login',
+  ADMIN_CUSTOMERS: '/admin/customers',
+  ADMIN_REPORTS: '/admin/reports',
 } as const;
 
 export const COLORS = {

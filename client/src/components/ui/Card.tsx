@@ -37,12 +37,12 @@ const Card: React.FC<CardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={hover ? { y: -4, boxShadow: '0 20px 25px -5px rgba(255, 214, 10, 0.3)' } : {}}
+      whileHover={hover ? { y: -4, boxShadow: '0 20px 25px -5px rgba(249, 115, 22, 0.3)' } : {}}
       className={clsx(
         'bg-white rounded-xl border border-gray-200 transition-all duration-300',
         paddingClasses[padding],
         shadowClasses[shadow],
-        hover && 'hover:border-yellow-400',
+        hover && 'hover:border-primary-400',
         className
       )}
     >

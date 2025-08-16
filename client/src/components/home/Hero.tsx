@@ -85,7 +85,7 @@ const Hero: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <motion.p
-                  className="text-yellow-400 text-lg font-semibold mb-4"
+                  className="text-secondary-400 text-lg font-semibold mb-4"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
@@ -139,7 +139,7 @@ const Hero: React.FC = () => {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                index === currentSlide ? 'bg-yellow-400 scale-125' : 'bg-white/50 hover:bg-white/70'
+                index === currentSlide ? 'bg-gradient-secondary scale-125 shadow-glow' : 'bg-white/50 hover:bg-white/70'
               }`}
             />
           ))}
@@ -149,13 +149,13 @@ const Hero: React.FC = () => {
       {/* Arrow Navigation */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-yellow-400 text-white hover:text-slate-900 p-3 rounded-full transition-all duration-200"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-gradient-primary text-white p-3 rounded-full transition-all duration-200 hover:shadow-orange"
       >
         <ChevronLeft className="h-6 w-6" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-yellow-400 text-white hover:text-slate-900 p-3 rounded-full transition-all duration-200"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-gradient-primary text-white p-3 rounded-full transition-all duration-200 hover:shadow-orange"
       >
         <ChevronRight className="h-6 w-6" />
       </button>

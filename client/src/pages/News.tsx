@@ -59,7 +59,7 @@ const News: React.FC = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Tin tức & <span className="text-yellow-400">Blog</span>
+              Tin tức & <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Blog</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8">
               Cập nhật thông tin mới nhất về ngành xe công trình và các sản phẩm
@@ -93,8 +93,8 @@ const News: React.FC = () => {
                     onClick={() => setSelectedCategory(category === 'Tất cả' ? '' : category)}
                     className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       (category === 'Tất cả' && !selectedCategory) || selectedCategory === category
-                        ? 'bg-yellow-400 text-slate-900'
-                        : 'hover:bg-gray-100 text-gray-600'
+                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-900'
+                        : 'hover:bg-gradient-to-r hover:from-yellow-100 hover:to-orange-100 text-gray-600'
                     }`}
                   >
                     {category}
@@ -152,7 +152,7 @@ const News: React.FC = () => {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute top-4 left-4">
-                            <span className="bg-yellow-400 text-slate-900 px-3 py-1 text-xs font-semibold rounded-full">
+                            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-900 px-3 py-1 text-xs font-semibold rounded-full">
                               Nổi bật
                             </span>
                           </div>
@@ -175,7 +175,7 @@ const News: React.FC = () => {
                             </div>
                           </div>
                           
-                          <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-yellow-500 transition-colors">
+                          <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-yellow-500 group-hover:to-orange-600 group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                             {item.title}
                           </h3>
                           
@@ -231,7 +231,7 @@ const News: React.FC = () => {
                             <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
                               <div className="flex items-center space-x-1">
                                 <Tag className="h-4 w-4" />
-                                <span className="bg-gray-100 px-2 py-1 rounded text-xs">
+                                <span className="bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-800 px-2 py-1 rounded text-xs">
                                   {item.category}
                                 </span>
                               </div>
@@ -245,7 +245,7 @@ const News: React.FC = () => {
                               </div>
                             </div>
                             
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-yellow-500 transition-colors">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-yellow-500 group-hover:to-orange-600 group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                               {item.title}
                             </h3>
                             

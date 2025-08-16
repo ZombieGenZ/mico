@@ -49,29 +49,29 @@ const Contact: React.FC = () => {
       icon: Phone,
       title: 'Điện thoại',
       details: ['Hotline: 0123.456.789', 'Fax: (028) 1234.5678'],
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-100',
+      color: 'text-orange-600',
+      bgColor: 'bg-gradient-to-br from-orange-100 to-yellow-100',
     },
     {
       icon: Mail,
       title: 'Email',
       details: ['info@xecongtrinhvn.com', 'sales@xecongtrinhvn.com'],
-      color: 'text-green-500',
-      bgColor: 'bg-green-100',
+      color: 'text-yellow-600',
+      bgColor: 'bg-gradient-to-br from-yellow-100 to-orange-100',
     },
     {
       icon: MapPin,
       title: 'Địa chỉ',
       details: ['123 Đường Nguyễn Văn Linh', 'Quận 7, TP. Hồ Chí Minh'],
-      color: 'text-red-500',
-      bgColor: 'bg-red-100',
+      color: 'text-orange-600',
+      bgColor: 'bg-gradient-to-br from-orange-100 to-yellow-100',
     },
     {
       icon: Clock,
       title: 'Giờ làm việc',
       details: ['Thứ 2 - Thứ 6: 8:00 - 17:30', 'Thứ 7: 8:00 - 12:00'],
-      color: 'text-purple-500',
-      bgColor: 'bg-purple-100',
+      color: 'text-yellow-600',
+      bgColor: 'bg-gradient-to-br from-yellow-100 to-orange-100',
     },
   ];
   
@@ -99,7 +99,7 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-slate-900 text-white py-20">
+      <section className="bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 text-white py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -108,9 +108,9 @@ const Contact: React.FC = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Liên hệ <span className="text-yellow-400">với chúng tôi</span>
+              Liên hệ <span className="text-yellow-200">với chúng tôi</span>
             </h1>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-orange-100 mb-8">
               Chúng tôi luôn sẵn sàng hỗ trợ và tư vấn cho bạn
             </p>
           </motion.div>
@@ -132,8 +132,8 @@ const Contact: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <Card className="text-center h-full">
-                    <div className={`${info.bgColor} w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center`}>
+                  <Card className="text-center h-full hover:shadow-lg transition-shadow duration-300">
+                    <div className={`${info.bgColor} w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-md`}>
                       <IconComponent className={`h-8 w-8 ${info.color}`} />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-3">
@@ -167,8 +167,8 @@ const Contact: React.FC = () => {
             >
               <Card>
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-yellow-400 p-3 rounded-lg">
-                    <MessageSquare className="h-6 w-6 text-slate-900" />
+                  <div className="bg-gradient-to-br from-yellow-400 to-orange-400 p-3 rounded-lg shadow-md">
+                    <MessageSquare className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-slate-900">Gửi tin nhắn</h2>
@@ -243,7 +243,7 @@ const Contact: React.FC = () => {
                     <textarea
                       rows={5}
                       placeholder="Nhập nội dung tin nhắn..."
-                      className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 transition-colors duration-200 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 focus:outline-none resize-none"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 transition-colors duration-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 focus:outline-none resize-none"
                       {...register('message', {
                         required: 'Vui lòng nhập nội dung',
                         minLength: {
@@ -261,7 +261,7 @@ const Contact: React.FC = () => {
                     type="submit"
                     variant="primary"
                     size="lg"
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
                     loading={isSubmitting}
                     icon={Send}
                   >
@@ -279,11 +279,13 @@ const Contact: React.FC = () => {
               transition={{ duration: 0.6 }}
             >
               <Card padding="none" className="h-full">
-                <div className="h-full min-h-[500px] bg-gray-200 rounded-xl flex items-center justify-center">
+                <div className="h-full min-h-[500px] bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">Bản đồ</h3>
-                    <p className="text-gray-500">
+                    <div className="bg-gradient-to-br from-yellow-400 to-orange-400 w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+                      <MapPin className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Bản đồ</h3>
+                    <p className="text-gray-600">
                       123 Đường Nguyễn Văn Linh<br />
                       Quận 7, TP. Hồ Chí Minh
                     </p>
@@ -296,7 +298,7 @@ const Contact: React.FC = () => {
       </section>
       
       {/* Branches */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gradient-to-br from-yellow-50 to-orange-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -322,10 +324,10 @@ const Contact: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card>
+                <Card className="hover:shadow-lg transition-shadow duration-300">
                   <div className="text-center mb-4">
-                    <div className="bg-yellow-400 w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <MapPin className="h-6 w-6 text-slate-900" />
+                    <div className="bg-gradient-to-br from-yellow-400 to-orange-400 w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center shadow-md">
+                      <MapPin className="h-6 w-6 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">
                       {branch.name}
@@ -334,15 +336,15 @@ const Contact: React.FC = () => {
                   
                   <div className="space-y-3 text-sm">
                     <div className="flex items-start space-x-2">
-                      <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <MapPin className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
                       <p className="text-gray-600">{branch.address}</p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <Phone className="h-4 w-4 text-orange-500 flex-shrink-0" />
                       <p className="text-gray-600">{branch.phone}</p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <User className="h-4 w-4 text-orange-500 flex-shrink-0" />
                       <p className="text-gray-600">Quản lý: {branch.manager}</p>
                     </div>
                   </div>
@@ -354,7 +356,7 @@ const Contact: React.FC = () => {
       </section>
       
       {/* CTA Section */}
-      <section className="py-20 bg-yellow-400">
+      <section className="py-20 bg-gradient-to-br from-yellow-400 via-yellow-300 to-orange-400">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -369,10 +371,20 @@ const Contact: React.FC = () => {
               Đội ngũ tư vấn của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg" icon={Phone}>
+              <Button 
+                variant="secondary" 
+                size="lg" 
+                icon={Phone}
+                className="bg-white text-orange-600 hover:bg-gray-100 border-2 border-white hover:border-gray-200"
+              >
                 Gọi ngay: 0123.456.789
               </Button>
-              <Button variant="outline" size="lg" icon={Mail}>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                icon={Mail}
+                className="bg-transparent text-slate-900 border-2 border-slate-900 hover:bg-slate-900 hover:text-white"
+              >
                 Email: info@xecongtrinhvn.com
               </Button>
             </div>

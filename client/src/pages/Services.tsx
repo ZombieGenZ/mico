@@ -88,7 +88,7 @@ const Services: React.FC = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Dịch vụ <span className="text-yellow-400">chuyên nghiệp</span>
+              Dịch vụ <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">chuyên nghiệp</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8">
               Cung cấp giải pháp toàn diện cho mọi nhu cầu xe công trình của bạn
@@ -134,7 +134,7 @@ const Services: React.FC = () => {
                 >
                   <Card className="h-full">
                     <div className="flex items-start space-x-6">
-                      <div className="bg-yellow-400 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0">
                         {IconComponent && <IconComponent className="h-8 w-8 text-slate-900" />}
                       </div>
                       <div className="flex-1">
@@ -196,8 +196,8 @@ const Services: React.FC = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <Card className="text-center h-full">
-                    <div className="bg-yellow-100 w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                      <IconComponent className="h-8 w-8 text-yellow-600" />
+                    <div className="bg-gradient-to-r from-yellow-100 to-orange-100 w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                      <IconComponent className="h-8 w-8 text-orange-600" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-3">
                       {benefit.title}
@@ -224,7 +224,7 @@ const Services: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold mb-4">
-              Quy trình <span className="text-yellow-400">làm việc</span>
+              Quy trình <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">làm việc</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               4 bước đơn giản để có được xe công trình phù hợp
@@ -245,13 +245,13 @@ const Services: React.FC = () => {
                   className="text-center relative"
                 >
                   {index < processSteps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-yellow-400/30 transform -translate-y-1/2" />
+                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-yellow-400/30 to-orange-500/30 transform -translate-y-1/2" />
                   )}
-                  <div className="bg-yellow-400 w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center relative z-10">
+                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center relative z-10">
                     <span className="text-2xl font-bold text-slate-900">{step.step}</span>
                   </div>
                   <div className="bg-slate-800 w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <IconComponent className="h-6 w-6 text-yellow-400" />
+                    <IconComponent className="h-6 w-6 text-orange-400" />
                   </div>
                   <h3 className="text-xl font-bold mb-2">{step.title}</h3>
                   <p className="text-gray-300">{step.description}</p>
@@ -263,7 +263,7 @@ const Services: React.FC = () => {
       </section>
       
       {/* CTA Section */}
-      <section className="py-20 bg-yellow-400">
+      <section className="py-20 bg-gradient-to-r from-yellow-400 to-orange-500">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -274,7 +274,7 @@ const Services: React.FC = () => {
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
               Sẵn sàng bắt đầu dự án của bạn?
             </h2>
-            <p className="text-xl text-slate-700 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-800 mb-8 max-w-2xl mx-auto">
               Liên hệ với chúng tôi ngay hôm nay để được tư vấn miễn phí
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

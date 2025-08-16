@@ -41,7 +41,7 @@ const Login: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -50,26 +50,29 @@ const Login: React.FC = () => {
       >
         <div className="text-center mb-8">
           <Link to={ROUTES.HOME} className="inline-flex items-center space-x-2 mb-4">
-            <div className="bg-yellow-400 text-slate-900 p-2 rounded-lg">
+            <div className="bg-white text-orange-600 p-2 rounded-lg shadow-md">
               <span className="font-bold text-lg">XE</span>
             </div>
             <div className="text-left">
-              <h1 className="text-lg font-bold text-yellow-400">XE CÔNG TRÌNH VN</h1>
-              <p className="text-xs text-gray-400">Đại lý xe công trình uy tín</p>
+              <h1 className="text-lg font-bold text-white">XE CÔNG TRÌNH VN</h1>
+              <p className="text-xs text-orange-100">Đại lý xe công trình uy tín</p>
             </div>
           </Link>
         </div>
         
-        <Card className="bg-white/95 backdrop-blur-sm">
+        <Card className="bg-white/95 backdrop-blur-sm shadow-2xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-2">Đăng nhập</h2>
             <p className="text-gray-600">Đăng nhập vào hệ thống quản trị</p>
           </div>
           
           {/* Demo Credentials */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-slate-900 mb-2">Thông tin demo:</h4>
-            <div className="text-sm text-gray-700">
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-lg p-4 mb-6">
+            <h4 className="font-semibold text-slate-900 mb-2 flex items-center">
+              <div className="bg-gradient-to-br from-yellow-400 to-orange-400 w-5 h-5 rounded-full mr-2"></div>
+              Thông tin demo:
+            </h4>
+            <div className="text-sm text-gray-700 space-y-1">
               <p><strong>Email:</strong> {DEMO_CREDENTIALS.email}</p>
               <p><strong>Mật khẩu:</strong> {DEMO_CREDENTIALS.password}</p>
             </div>
@@ -81,6 +84,7 @@ const Login: React.FC = () => {
               type="email"
               icon={Mail}
               placeholder="Nhập email của bạn"
+              className="focus:border-orange-400 focus:ring-orange-400/20"
               {...register('email', {
                 required: 'Vui lòng nhập email',
                 pattern: {
@@ -97,6 +101,7 @@ const Login: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
                 icon={Lock}
                 placeholder="Nhập mật khẩu của bạn"
+                className="focus:border-orange-400 focus:ring-orange-400/20"
                 {...register('password', {
                   required: 'Vui lòng nhập mật khẩu',
                   minLength: {
@@ -109,7 +114,7 @@ const Login: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-9 text-gray-400 hover:text-orange-500 transition-colors"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -117,9 +122,8 @@ const Login: React.FC = () => {
             
             <Button
               type="submit"
-              variant="primary"
               size="lg"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300"
               loading={isSubmitting}
             >
               {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
@@ -129,12 +133,17 @@ const Login: React.FC = () => {
           <div className="text-center mt-6">
             <Link
               to={ROUTES.HOME}
-              className="text-gray-600 hover:text-yellow-500 transition-colors duration-200"
+              className="text-gray-600 hover:text-orange-500 transition-colors duration-200 font-medium"
             >
               ← Quay lại trang chủ
             </Link>
           </div>
         </Card>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-20 w-32 h-32 bg-yellow-300/20 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-orange-400/20 rounded-full blur-xl"></div>
       </motion.div>
     </div>
   );

@@ -33,7 +33,7 @@ const Statistics: React.FC = () => {
   return (
     <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23FFD60A%22 fill-opacity=%220.03%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23f97316%22 fill-opacity=%220.03%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -44,7 +44,7 @@ const Statistics: React.FC = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Những con số <span className="text-yellow-400">ấn tượng</span>
+            Những con số <span className="bg-gradient-to-r from-secondary-400 to-primary-400 bg-clip-text text-transparent">ấn tượng</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Thành tựu và sự tin tưởng từ khách hàng trong suốt hành trình phát triển
@@ -64,15 +64,15 @@ const Statistics: React.FC = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="text-center group"
               >
-                <div className="bg-yellow-400 w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <IconComponent className="h-10 w-10 text-slate-900" />
+                <div className="bg-gradient-primary w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-orange">
+                  <IconComponent className="h-10 w-10 text-white" />
                 </div>
                 <motion.h3
                   initial={{ scale: 0.5 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                  className="text-4xl md:text-5xl font-bold text-yellow-400 mb-2"
+                  className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-secondary-400 to-primary-400 bg-clip-text text-transparent mb-2"
                 >
                   {stat.number}
                 </motion.h3>
