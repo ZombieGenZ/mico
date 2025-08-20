@@ -1,65 +1,70 @@
 import { create } from 'zustand';
-import { Vehicle } from '../lib/types';
-import { vehicles as mockVehicles } from '../lib/mockData';
+import { Vehicle } from '../types/vehicleTypes';
+import VehicleServices from '../services/vehicleServices';
 
 interface VehicleState {
   vehicles: Vehicle[];
+  isLoading: boolean;
   searchTerm: string;
   selectedCategory: string;
   selectedBrand: string;
-  priceRange: [number, number];
   sortBy: string;
+  fetchVehicles: () => Promise<void>;
   setSearchTerm: (term: string) => void;
   setSelectedCategory: (category: string) => void;
   setSelectedBrand: (brand: string) => void;
-  setPriceRange: (range: [number, number]) => void;
   setSortBy: (sort: string) => void;
   getFilteredVehicles: () => Vehicle[];
   addVehicle: (vehicle: Vehicle) => void;
-  updateVehicle: (id: number, vehicle: Partial<Vehicle>) => void;
-  deleteVehicle: (id: number) => void;
-  getVehicleById: (id: number) => Vehicle | undefined;
+  updateVehicle: (id: string, vehicle: Partial<Vehicle>) => void;
+  deleteVehicle: (id: string) => void;
+  getVehicleById: (id: string) => Vehicle | undefined;
 }
 
+const vehicleService = new VehicleServices();
+
 export const useVehicleStore = create<VehicleState>((set, get) => ({
-  vehicles: mockVehicles,
+  vehicles: [], // Khởi tạo với array rỗng
+  isLoading: false, // Trạng thái loading
   searchTerm: '',
   selectedCategory: '',
   selectedBrand: '',
-  priceRange: [0, 10000000000],
-  sortBy: 'name',
+  sortBy: 'title',
+  
+  fetchVehicles: async () => {
+    set({ isLoading: true });
+    try {
+      const vehicles = await vehicleService.getVehicles();
+      set({ vehicles, isLoading: false });
+    } catch (error) {
+      console.error('Lỗi khi tải danh sách xe:', error);
+      set({ isLoading: false });
+    }
+  },
   
   setSearchTerm: (term) => set({ searchTerm: term }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
   setSelectedBrand: (brand) => set({ selectedBrand: brand }),
-  setPriceRange: (range) => set({ priceRange: range }),
   setSortBy: (sort) => set({ sortBy: sort }),
   
   getFilteredVehicles: () => {
-    const { vehicles, searchTerm, selectedCategory, selectedBrand, priceRange, sortBy } = get();
+    const { vehicles, searchTerm, selectedCategory, selectedBrand, sortBy } = get();
     
-    let filtered = vehicles.filter(vehicle => {
-      const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          vehicle.brand.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = !selectedCategory || vehicle.category === selectedCategory;
-      const matchesBrand = !selectedBrand || vehicle.brand === selectedBrand;
-      const matchesPrice = vehicle.price >= priceRange[0] && vehicle.price <= priceRange[1];
+    const filtered = vehicles.filter(vehicle => {
+      const matchesSearch = vehicle.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          vehicle.subtitle.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = !selectedCategory || vehicle.category_id === selectedCategory;
+      const matchesBrand = !selectedBrand || vehicle.brand_id === selectedBrand;
       
-      return matchesSearch && matchesCategory && matchesBrand && matchesPrice;
+      return matchesSearch && matchesCategory && matchesBrand;
     });
     
     // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'year':
-          return b.year - a.year;
-        case 'name':
+        case 'title':
         default:
-          return a.name.localeCompare(b.name);
+          return a.title.localeCompare(b.title);
       }
     });
     
@@ -68,8 +73,8 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
   
   addVehicle: (vehicle) => set(state => ({ vehicles: [...state.vehicles, vehicle] })),
   updateVehicle: (id, updatedVehicle) => set(state => ({
-    vehicles: state.vehicles.map(v => v.id === id ? { ...v, ...updatedVehicle } : v)
+    vehicles: state.vehicles.map(v => v._id === id ? { ...v, ...updatedVehicle } : v)
   })),
-  deleteVehicle: (id) => set(state => ({ vehicles: state.vehicles.filter(v => v.id !== id) })),
-  getVehicleById: (id) => get().vehicles.find(v => v.id === id),
+  deleteVehicle: (id) => set(state => ({ vehicles: state.vehicles.filter(v => v._id !== id) })),
+  getVehicleById: (id: string) => get().vehicles.find(v => v._id === id),
 }));

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Grid, List, Heart, Eye, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,35 +7,74 @@ import { useVehicleStore } from '../stores/vehicleStore';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import VehicleServices from '../services/vehicleServices';
+import { Vehicle } from '../types/vehicleTypes';
 
 const Vehicles: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const {
     searchTerm,
     selectedCategory,
     selectedBrand,
-    priceRange,
     sortBy,
     setSearchTerm,
     setSelectedCategory,
     setSelectedBrand,
-    setPriceRange,
     setSortBy,
     getFilteredVehicles,
   } = useVehicleStore();
   
-  const filteredVehicles = getFilteredVehicles();
-  const brands = Array.from(new Set(filteredVehicles.map(v => v.brand))).sort();
+  // Load vehicles from API when component mounts
+  useEffect(() => {
+    const loadVehicles = async () => {
+      try {
+        setLoading(true);
+        const vehicleService = new VehicleServices();
+        const vehiclesData = await vehicleService.getVehicles();
+        // Update store with vehicles data
+        vehiclesData.forEach((vehicle: Vehicle) => {
+          useVehicleStore.getState().addVehicle(vehicle);
+        });
+      } catch (error) {
+        console.error('Error loading vehicles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadVehicles();
+  }, []);
   
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+  const filteredVehicles = getFilteredVehicles();
+  
+  // Get unique brands from vehicles
+  const brands = Array.from(new Set(
+    filteredVehicles
+      .map(v => v.brand_id)
+      .filter(Boolean)
+  )).sort();
+  
+  // Get unique categories from vehicles
+  const vehicleCategories = Array.from(new Set(
+    filteredVehicles
+      .map(v => v.category_id)
+      .filter(Boolean)
+  ));
+  
+  // Helper function to get category name by ID
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find(cat => cat.id.toString() === categoryId);
+    return category?.name || categoryId;
+  };
+  
+  // Helper function to get brand name by ID
+  const getBrandName = (brandId: string) => {
+    // For now, return brandId as brand name since we don't have brand data
+    // You can implement this when you have brand service
+    return brandId;
   };
   
   return (
@@ -60,7 +99,7 @@ const Vehicles: React.FC = () => {
             <div className="max-w-2xl mx-auto">
               <Input
                 type="text"
-                placeholder="Tìm kiếm theo tên xe hoặc thương hiệu..."
+                placeholder="Tìm kiếm theo tên xe hoặc mô tả..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 icon={Search}
@@ -101,17 +140,17 @@ const Vehicles: React.FC = () => {
                     >
                       Tất cả ({filteredVehicles.length})
                     </button>
-                    {categories.map((category) => (
+                    {vehicleCategories.map((categoryId) => (
                       <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.slug)}
+                        key={categoryId}
+                        onClick={() => setSelectedCategory(categoryId)}
                         className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedCategory === category.slug
+                          selectedCategory === categoryId
                             ? 'bg-yellow-400 text-slate-900'
                             : 'hover:bg-gray-100 text-gray-600'
                         }`}
                       >
-                        {category.name} ({category.vehicleCount})
+                        {getCategoryName(categoryId)}
                       </button>
                     ))}
                   </div>
@@ -131,39 +170,19 @@ const Vehicles: React.FC = () => {
                     >
                       Tất cả
                     </button>
-                    {brands.map((brand) => (
+                    {brands.map((brandId) => (
                       <button
-                        key={brand}
-                        onClick={() => setSelectedBrand(brand)}
+                        key={brandId}
+                        onClick={() => setSelectedBrand(brandId)}
                         className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedBrand === brand
+                          selectedBrand === brandId
                             ? 'bg-yellow-400 text-slate-900'
                             : 'hover:bg-gray-100 text-gray-600'
                         }`}
                       >
-                        {brand}
+                        {getBrandName(brandId)}
                       </button>
                     ))}
-                  </div>
-                </div>
-                
-                {/* Price Range */}
-                <div>
-                  <h4 className="font-medium text-slate-900 mb-3">Khoảng giá</h4>
-                  <div className="space-y-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="10000000000"
-                      step="100000000"
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <span>0đ</span>
-                      <span>{formatPrice(priceRange[1])}</span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -187,10 +206,7 @@ const Vehicles: React.FC = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 >
-                  <option value="name">Sắp xếp theo tên</option>
-                  <option value="price-low">Giá thấp đến cao</option>
-                  <option value="price-high">Giá cao đến thấp</option>
-                  <option value="year">Năm sản xuất</option>
+                  <option value="title">Sắp xếp theo tên</option>
                 </select>
                 
                 {/* View Mode */}
@@ -219,8 +235,16 @@ const Vehicles: React.FC = () => {
               </div>
             </div>
             
+            {/* Loading State */}
+            {loading && (
+              <Card className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+                <p className="text-gray-500 text-lg">Đang tải dữ liệu...</p>
+              </Card>
+            )}
+            
             {/* Vehicle Grid */}
-            {filteredVehicles.length > 0 ? (
+            {!loading && filteredVehicles.length > 0 ? (
               <div
                 className={
                   viewMode === 'grid'
@@ -230,7 +254,7 @@ const Vehicles: React.FC = () => {
               >
                 {filteredVehicles.map((vehicle, index) => (
                   <motion.div
-                    key={vehicle.id}
+                    key={vehicle._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -244,8 +268,8 @@ const Vehicles: React.FC = () => {
                       <div className={viewMode === 'list' ? 'w-1/3' : ''}>
                         <div className="relative">
                           <img
-                            src={vehicle.images[0]}
-                            alt={vehicle.name}
+                            src={vehicle.image && vehicle.image[0] ? vehicle.image[0].url : 'https://via.placeholder.com/400x300?text=Vehicle+Image'}
+                            alt={vehicle.title}
                             className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
                               viewMode === 'list' ? 'w-full h-48' : 'w-full h-64'
                             }`}
@@ -254,12 +278,12 @@ const Vehicles: React.FC = () => {
                           <div className="absolute top-4 left-4">
                             <span
                               className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                                vehicle.condition === 'new'
+                                vehicle.is_new
                                   ? 'bg-green-500 text-white'
                                   : 'bg-yellow-400 text-slate-900'
                               }`}
                             >
-                              {vehicle.condition === 'new' ? 'Mới' : 'Đã sử dụng'}
+                              {vehicle.is_new ? 'Mới' : 'Đã sử dụng'}
                             </span>
                           </div>
                           <div className="absolute top-4 right-4 flex space-x-2">
@@ -276,38 +300,55 @@ const Vehicles: React.FC = () => {
                       <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
                         <div className="flex justify-between items-start mb-3">
                           <h3 className="text-xl font-bold text-slate-900 group-hover:text-yellow-500 transition-colors duration-200">
-                            {vehicle.name}
+                            {vehicle.title}
                           </h3>
-                          <span className="text-sm text-gray-500">{vehicle.year}</span>
+                          <span className="text-sm text-gray-500">
+                            {vehicle.created_at ? new Date(vehicle.created_at).getFullYear() : 'N/A'}
+                          </span>
                         </div>
                         
                         <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                          {vehicle.description}
+                          {vehicle.subtitle}
                         </p>
                         
-                        <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                          <div>
-                            <span className="text-gray-500">Công suất:</span>
-                            <p className="font-semibold text-slate-900">{vehicle.specs.power}</p>
+                        {/* Technical Information */}
+                        {vehicle.technical_information && vehicle.technical_information.length > 0 && (
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            {vehicle.technical_information.slice(0, 2).map((info, idx) => (
+                              <div key={idx}>
+                                <span className="text-gray-500">{info.name}:</span>
+                                <p className="font-semibold text-slate-900">{info.value}</p>
+                              </div>
+                            ))}
                           </div>
-                          <div>
-                            <span className="text-gray-500">Trọng lượng:</span>
-                            <p className="font-semibold text-slate-900">{vehicle.specs.weight}</p>
+                        )}
+                        
+                        {/* Features */}
+                        {vehicle.features && vehicle.features.length > 0 && (
+                          <div className="mb-4">
+                            <div className="flex flex-wrap gap-2">
+                              {vehicle.features.slice(0, 3).map((feature, idx) => (
+                                <span
+                                  key={idx}
+                                  className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                                >
+                                  {feature.value}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                        </div>
+                        )}
                         
                         <div className="flex justify-between items-center border-t pt-4">
                           <div>
                             <p className="text-2xl font-bold text-yellow-500">
-                              {formatPrice(vehicle.price)}
+                              {vehicle.in_stock ? 'Có sẵn' : 'Hết hàng'}
                             </p>
-                            {vehicle.rentPrice && (
-                              <p className="text-sm text-gray-500">
-                                Thuê: {formatPrice(vehicle.rentPrice)}/tháng
-                              </p>
-                            )}
+                            <p className="text-sm text-gray-500">
+                              {getCategoryName(vehicle.category_id)} • {getBrandName(vehicle.brand_id)}
+                            </p>
                           </div>
-                          <Link to={`/vehicles/${vehicle.id}`}>
+                          <Link to={`/vehicles/${vehicle._id}`}>
                             <Button
                               variant="outline"
                               size="sm"
@@ -323,13 +364,13 @@ const Vehicles: React.FC = () => {
                   </motion.div>
                 ))}
               </div>
-            ) : (
+            ) : !loading ? (
               <Card className="text-center py-12">
                 <p className="text-gray-500 text-lg">
                   Không tìm thấy xe công trình phù hợp với tiêu chí tìm kiếm
                 </p>
               </Card>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
