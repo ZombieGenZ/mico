@@ -2,11 +2,11 @@ import { Vehicle } from "../types/vehicleTypes"
 import axios from "axios"
 
 export default class VehicleServices {
-    private apiUrl = import.meta.env.VITE_API_URL
+    private apiUrl = 'http://localhost:3000/api'
 
     async getVehicles(): Promise<Vehicle[]> {
         const response = await axios.get(`${this.apiUrl}/products`)
-        return response.data
+        return response.data.data
     }
 
     async getVehicleById(id: string): Promise<Vehicle> {

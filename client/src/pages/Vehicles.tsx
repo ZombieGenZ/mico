@@ -9,11 +9,17 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import VehicleServices from '../services/vehicleServices';
 import { Vehicle } from '../types/vehicleTypes';
+import BrandsServices from '../services/brandsServices';
+
+
+const vehicleService = new VehicleServices();
+const brandService = new BrandsServices();
 
 const Vehicles: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [brandNames, setBrandNames] = useState<Record<string, string>>({});
   
   const {
     searchTerm,
@@ -32,7 +38,6 @@ const Vehicles: React.FC = () => {
     const loadVehicles = async () => {
       try {
         setLoading(true);
-        const vehicleService = new VehicleServices();
         const vehiclesData = await vehicleService.getVehicles();
         // Update store with vehicles data
         vehiclesData.forEach((vehicle: Vehicle) => {
@@ -46,6 +51,26 @@ const Vehicles: React.FC = () => {
     };
     
     loadVehicles();
+  }, []);
+  
+  // Load brand names when component mounts
+  useEffect(() => {
+    const loadBrandNames = async () => {
+      try {
+        const brandsData = await brandService.getBrands();
+        const brandMap: Record<string, string> = {};
+        brandsData.forEach(brand => {
+          if (brand._id) {
+            brandMap[brand._id] = brand.name;
+          }
+        });
+        setBrandNames(brandMap);
+      } catch (error) {
+        console.error('Error loading brand names:', error);
+      }
+    };
+    
+    loadBrandNames();
   }, []);
   
   const filteredVehicles = getFilteredVehicles();
@@ -70,11 +95,9 @@ const Vehicles: React.FC = () => {
     return category?.name || categoryId;
   };
   
-  // Helper function to get brand name by ID
-  const getBrandName = (brandId: string) => {
-    // For now, return brandId as brand name since we don't have brand data
-    // You can implement this when you have brand service
-    return brandId;
+  // Helper function to get brand name by ID (sync from state)
+  const getBrandName = (brandId: string): string => {
+    return brandNames[brandId] || brandId;
   };
   
   return (

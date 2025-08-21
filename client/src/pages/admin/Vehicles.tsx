@@ -18,11 +18,13 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import VehicleServices from '../../services/vehicleServices';
 import { Vehicle } from '../../types/vehicleTypes';
+import VehicleFormModal from '../../components/admin/VehicleFormModal';
 
 const AdminVehicles: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const { vehicles, deleteVehicle, addVehicle } = useVehicleStore();
   
@@ -72,6 +74,23 @@ const AdminVehicles: React.FC = () => {
     }
   };
   
+  const handleAddVehicle = (vehicle: Vehicle) => {
+    // Thêm ID tạm thời nếu không có
+    const newVehicle: Vehicle = {
+      ...vehicle,
+      _id: vehicle._id || `temp-${Date.now()}`,
+      created_at: new Date()
+    };
+    
+    addVehicle(newVehicle);
+    
+    // Trong thực tế, bạn sẽ gọi API để lưu xe vào database
+    // const vehicleService = new VehicleServices();
+    // vehicleService.createVehicle(vehicle).then(response => {
+    //   addVehicle(response);
+    // });
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -79,7 +98,11 @@ const AdminVehicles: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Quản lý xe công trình</h1>
           <p className="text-gray-600">Quản lý danh sách xe công trình</p>
         </div>
-        <Button variant="primary" icon={Plus}>
+        <Button 
+          variant="primary" 
+          icon={Plus}
+          onClick={() => setIsModalOpen(true)}
+        >
           Thêm xe mới
         </Button>
       </div>
@@ -286,6 +309,13 @@ const AdminVehicles: React.FC = () => {
           )}
         </Card>
       )}
+      
+      {/* Modal thêm xe mới */}
+      <VehicleFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddVehicle}
+      />
     </div>
   );
 };

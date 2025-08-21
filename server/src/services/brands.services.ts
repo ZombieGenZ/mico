@@ -4,7 +4,7 @@ import Brand from '~/models/schemas/brands.schemas'
 
 class BrandService {
   async get() {
-    return await databaseService.topics.find({ is_deleted: false }).toArray()
+    return await databaseService.brands.find({ is_deleted: false }).toArray()
   }
   async create(payload: BrandRequestBody) {
     await databaseService.brands.insertOne(
