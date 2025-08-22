@@ -35,7 +35,7 @@ const Login: React.FC = () => {
       } else {
         toast.error('Email hoặc mật khẩu không chính xác!');
       }
-    } catch (error) {
+    } catch {
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
