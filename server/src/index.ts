@@ -7,6 +7,7 @@ import path from 'path'
 import bodyParser from 'body-parser'
 import { defaultErrorHandler } from './middlewares/errors.middlewares'
 import expressUserAgent from 'express-useragent'
+import { initServiceInformation } from './state/serviceInformation.state'
 
 dotenv.config()
 const port = process.env.APP_PORT || 3000
@@ -47,6 +48,8 @@ app.get('/', (req, res) => {
     message: 'Hello world'
   })
 })
+
+initServiceInformation()
 
 import users from '~/routes/users.routes'
 import categories from '~/routes/categories.routes'

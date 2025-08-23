@@ -47,6 +47,9 @@ server/!public/images/uploads/posts/temporary/
 server/!public/images/uploads/posts/posts/
 !server/!public/images/uploads/posts/posts/.gitkeep
 
+server/data/**
+!server/data/.gitkeep
+
 # Keep required placeholders
 !server/!public/.gitkeep
 
