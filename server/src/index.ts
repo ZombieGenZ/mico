@@ -6,6 +6,7 @@ import cors from 'cors'
 import path from 'path'
 import bodyParser from 'body-parser'
 import { defaultErrorHandler } from './middlewares/errors.middlewares'
+import expressUserAgent from 'express-useragent'
 
 dotenv.config()
 const port = process.env.APP_PORT || 3000
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 })
 
 app.use(express.json())
+app.use(expressUserAgent.express())
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))

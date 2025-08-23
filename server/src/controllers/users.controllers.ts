@@ -1,8 +1,10 @@
+import axios from 'axios'
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { omit } from 'lodash'
 import { ObjectId } from 'mongodb'
 import HTTPSTATUS from '~/constants/httpStatus.constants'
+import { MAIL } from '~/constants/mail.constants'
 import { AUTHENTICATE_MESSAGE, USER_MESSAGE } from '~/constants/message.constants'
 import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import { TokenType } from '~/enums/jwt.enums'
@@ -12,7 +14,9 @@ import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
 import userService from '~/services/users.services'
+import { formatDate } from '~/utils/date.utils'
 import { verifyToken } from '~/utils/jwt.utils'
+import { sendMail } from '~/utils/mail.utils'
 
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterRequestBody>, res: Response) => {
   try {
@@ -33,7 +37,32 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   try {
     const user = req.user as User
+
     const authenticate = await userService.login(user)
+
+    // const ip = (req.headers['cf-connecting-ip'] || req.ip) as string
+
+    // const ipData = (await axios.get(`https://ipinfo.io/${ip}/?token=${process.env.IPINFO_TOKEN}`)).data
+    // const [latitude, longitude] = ipData.loc.split(',')
+    // const locationData = await axios.get(
+    //   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    // )
+    // const userAgent = req.useragent
+    // const deviceInfo = {
+    //   isMobile: userAgent?.isMobile,
+    //   browser: userAgent?.browser,
+    //   os: userAgent?.os
+    // }
+
+    // const content = MAIL.Security(
+    //   formatDate(),
+    //   locationData.data.display_name,
+    //   ip,
+    //   deviceInfo.browser as string,
+    //   deviceInfo.os as string
+    // )
+
+    // sendMail(user.email, content.title, content.html)
 
     res.json({
       code: RESPONSE_CODE.LOGIN_SUCCESSFUL,
