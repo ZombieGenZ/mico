@@ -237,3 +237,37 @@ export const CONTACT_MESSAGE = {
   CONTACT_ID_IS_MUST_BE_A_ID: 'ID liên hệ không đúng định dạng',
   CONTACT_ID_DOES_NOT_EXIST: 'ID liên hệ không tồn tại'
 } as const
+
+export const REQUESTQUOTE_MESSAGE = {
+  GET_REQUESTQUOTE_SUCCESS: 'Lấy thông tin yêu cầu báo giá thành công',
+  GET_REQUESTQUOTE_FAILURE: 'Lấy thông tin yêu cầu báo giá thất bại',
+  REQUESTQUOTE_SUCCESS: 'Để lại thông tin yêu cầu báo giá thành công',
+  REQUESTQUOTE_FAILURE: 'Để lại thông tin yêu cầu báo giá thất bại',
+  COMPLETE_REQUESTQUOTE_SUCCESS: 'Hoàn thành yêu cầu báo giá thành công',
+  COMPLETE_REQUESTQUOTE_FAILURE: 'Hoàn thành yêu cầu báo giá thất bại',
+  NAME_IS_REQUIRED: 'Không được bỏ trống tên của bạn',
+  NAME_MUST_BE_A_STRING: 'Tên của bạn phải là chuỗi ký tự',
+  NAME_LENGTH_MUST_BE_FROM_1_TO_50: 'Tên của bạn phải có độ dài từ 1 đến 50 ký tự',
+  EMAIL_IS_REQUIRED: 'Không được bỏ trống địa chỉ email',
+  EMAIL_MUST_BE_A_STRING: 'Địa chỉ email phải là một chuỗi ký tự',
+  EMAIL_LENGTH_MUST_BE_FROM_5_TO_100: 'Địa chỉ email phải có độ dài từ 5 đến 100 ký tự',
+  EMAIL_IS_NOT_VALID: 'Địa chỉ email không đúng định dạng',
+  PHONE_IS_REQUIRED: 'Không được bỏ trống số điện thoại',
+  PHONE_MUST_BE_A_STRING: 'Số điện thoại phải là một chuỗi ký tự',
+  PHONE_LENGTH_MUST_BE_FROM_10_TO_11: 'Số điện thoại phải có độ dài từ 10 đến 11 ký tự',
+  PHONE_IS_NOT_VALID: 'Số điện thoại không hợp lệ',
+  COMPANY_MUST_BE_A_STRING: 'Tên công ty phải là chuỗi ký tự',
+  COMPANY_LENGTH_MUST_BE_FROM_1_TO_150: 'Tên công ty phải có độ dài từ 1 đến 150 ký tự',
+  MESSAGE_IS_REQUIRED: 'Không được bỏ trống tin nhắn',
+  MESSAGE_MUST_BE_A_STRING: 'Tin nhắn phải là một chuỗi ký tự',
+  MESSAGE_LENGTH_MUST_BE_FROM_1_TO_150: 'Tin nhắn phải có độ dài từ 1 đến 150 ký tự',
+  PRODUCT_LIST_IS_REQUIRED: 'Không được bỏ trống danh sách sản phẩm',
+  PRODUCT_LIST_MUST_BE_AN_ARRAY: 'Danh sách sản phẩm phải là một mảng chứa ID',
+  PRODUCT_ID_MUST_BE_STRING: 'Mỗi sản phẩm phải là chuỗi ký tự',
+  PRODUCT_ID_MUST_BE_A_VALID_OBJECT_ID: 'ID sản phẩm không hợp lệ',
+  PRODUCT_NOT_FOUND: 'Có sản phẩm không tồn tại',
+  REQUESTQUOTE_ID_IS_REQUIRED: 'Không được bỏ trống ID yêu cầu báo giá',
+  REQUESTQUOTE_ID_MUST_BE_A_STRING: 'ID yêu cầu báo giá phải là một chuỗi ký tự',
+  REQUESTQUOTE_ID_IS_MUST_BE_A_ID: 'ID yêu cầu báo giá không đúng định dạng',
+  REQUESTQUOTE_ID_DOES_NOT_EXIST: 'ID yêu cầu báo giá không tồn tại'
+} as const

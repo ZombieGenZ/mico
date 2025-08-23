@@ -53,6 +53,7 @@ import brands from '~/routes/brands.routes'
 import products from '~/routes/products.routes'
 import posts from '~/routes/posts.routes'
 import contacts from '~/routes/contacts.routes'
+import requestQuote from '~/routes/requestQuote.routes'
 
 app.use('/api/users', users)
 app.use('/api/categories', categories)
@@ -61,6 +62,7 @@ app.use('/api/brands', brands)
 app.use('/api/products', products)
 app.use('/api/posts', posts)
 app.use('/api/contacts', contacts)
+app.use('/api/request-quote', requestQuote)
 
 app.use(defaultErrorHandler)
 

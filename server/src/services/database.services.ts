@@ -6,6 +6,7 @@ import Category from '~/models/schemas/categories.schemas'
 import Product from '~/models/schemas/products.shemas'
 import Post from '~/models/schemas/posts.schemas'
 import Contact from '~/models/schemas/contacts.schemas'
+import RequestQuote from '~/models/schemas/requestQuote.schemas'
 
 dotenv.config()
 
@@ -54,6 +55,9 @@ class DatabaseService {
   }
   get contacts(): Collection<Contact> {
     return this.db.collection(process.env.DATABASE_CONTACT_COLLECTION as string)
+  }
+  get requestQuote(): Collection<RequestQuote> {
+    return this.db.collection(process.env.DATABASE_REQUESTQUOTE_COLLECTION as string)
   }
 }
 

@@ -9,6 +9,8 @@ import Product from './models/schemas/products.shemas'
 import Post from './models/schemas/posts.schemas'
 import { ImageType } from './interfaces/image.interfaces'
 import Contact from './models/schemas/contacts.schemas'
+import { ObjectId } from 'mongodb'
+import RequestQuote from './models/schemas/requestQuote.schemas'
 
 declare module 'express' {
   interface Request {
@@ -21,5 +23,7 @@ declare module 'express' {
     post?: Post
     image?: ImageType | ImageType[]
     contact?: Contact
+    productList?: ObjectId[]
+    requestQuote?: RequestQuote
   }
 }
