@@ -74,7 +74,7 @@ class UserService {
       }
     })
   }
-  private signAdministratorPermissionToken(user_id: string) {
+  private signTemporary2faToken(user_id: string) {
     return signToken({
       payload: {
         user_id: user_id,

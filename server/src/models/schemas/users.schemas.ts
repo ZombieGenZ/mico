@@ -6,6 +6,8 @@ export default class User {
   name: string
   email: string
   password: string
+  twoFactorSecret: string | null
+  twoFactorEnabled: boolean
   created_at: Date
   updated_at: Date
 
@@ -16,6 +18,8 @@ export default class User {
     this.name = user.name
     this.email = user.email
     this.password = user.password
+    this.twoFactorSecret = user.twoFactorSecret || null
+    this.twoFactorEnabled = user.twoFactorEnabled || false
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date
   }
