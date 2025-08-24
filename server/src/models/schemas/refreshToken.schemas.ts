@@ -5,6 +5,9 @@ export default class RefreshToken {
   _id: ObjectId
   token: string
   user_id: ObjectId
+  ip: string
+  device: string
+  os: string
   created_at: Date
   updated_at: Date
 
@@ -14,6 +17,9 @@ export default class RefreshToken {
     this._id = token._id || new ObjectId()
     this.token = token.token
     this.user_id = token.user_id
+    this.ip = token.ip || ''
+    this.device = token.device || ''
+    this.os = token.os || ''
     this.created_at = token.created_at || date
     this.updated_at = token.updated_at || date
   }

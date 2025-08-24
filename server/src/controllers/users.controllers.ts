@@ -36,10 +36,7 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   try {
-    const user = req.user as User
-
-    const authenticate = await userService.login(user)
-
+    // // CLOUD
     // const ip = (req.headers['cf-connecting-ip'] || req.ip) as string
 
     // const ipData = (await axios.get(`https://ipinfo.io/${ip}/?token=${process.env.IPINFO_TOKEN}`)).data
@@ -62,7 +59,16 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
     //   deviceInfo.os as string
     // )
 
+    // const user = req.user as User
+
+    // const authenticate = await userService.login(user, ip, deviceInfo.browser, deviceInfo.os)
+
     // sendMail(user.email, content.title, content.html)
+
+    // LOCAL
+    const user = req.user as User
+
+    const authenticate = await userService.login(user)
 
     res.json({
       code: RESPONSE_CODE.LOGIN_SUCCESSFUL,

@@ -21,9 +21,9 @@ class UserService {
       })
     )
   }
-  async login(user: User) {
+  async login(user: User, ip?: string, device?: string, os?: string) {
     const authenticate = await this.signAccessTokenAndRefreshToken(user._id.toString())
-    await this.insertRefreshToken(user._id.toString(), authenticate[1])
+    await this.insertRefreshToken(user._id.toString(), authenticate[1], ip, device, os)
 
     return authenticate
   }
@@ -63,11 +63,14 @@ class UserService {
   signAccessTokenAndRefreshToken(user_id: string) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
-  private async insertRefreshToken(user_id: string, token: string) {
+  private async insertRefreshToken(user_id: string, token: string, ip?: string, device?: string, os?: string) {
     await databaseService.refreshToken.insertOne(
       new RefreshToken({
         token,
-        user_id: new ObjectId(user_id)
+        user_id: new ObjectId(user_id),
+        ip,
+        device,
+        os
       })
     )
   }
