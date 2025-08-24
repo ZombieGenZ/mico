@@ -9,6 +9,9 @@ const router = express.Router()
  * Description: Lấy thông tin liên hệ
  * Path: /api/contacts
  * Method: GET
+ * headers: {
+ *    authorization?: Bearer <token>
+ * }
  */
 router.get('/', accessTokenValidator, wrapRequestHandler(getContactController))
 
@@ -17,11 +20,11 @@ router.get('/', accessTokenValidator, wrapRequestHandler(getContactController))
  * Path: /api/contacts
  * Method: POST
  * Body: {
- *    name: string
- *    email: string
- *    phone: string
- *    company: string | null
- *    title: string
+ *    name: string,
+ *    email: string,
+ *    phone: string,
+ *    company: string | null,
+ *    title: string,
  *    content: string
  * }
  */
@@ -31,6 +34,9 @@ router.post('/', contactValidator, wrapRequestHandler(contactController))
  * Description: Hoàn thành thông tin liên hệ
  * Path: /api/contacts/:id
  * Method: PUT
+ * headers: {
+ *    authorization?: Bearer <token>
+ * },
  */
 router.put('/:id', accessTokenValidator, contactIdValidator, wrapRequestHandler(completeContactController))
 

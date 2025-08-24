@@ -31,11 +31,11 @@ router.get('/', wrapRequestHandler(getPostController))
  *    authorization?: Bearer <token>
  * },
  * Body: {
- *    title: string
- *    sub_title: string
- *    content: string
- *    topic_id: string
- *    is_featured: boolean
+ *    title: string,
+ *    sub_title: string,
+ *    content: string,
+ *    topic_id: string,
+ *    is_featured: boolean,
  *    thumbnail: file
  * }
  */
@@ -56,11 +56,11 @@ router.post(
  *    authorization?: Bearer <token>
  * },
  * Body: {
- *    title: string
- *    sub_title: string
- *    content: string
- *    topic_id: string
- *    is_featured: boolean
+ *    title: string,
+ *    sub_title: string,
+ *    content: string,
+ *    topic_id: string,
+ *    is_featured: boolean,
  *    thumbnail: file
  * }
  */

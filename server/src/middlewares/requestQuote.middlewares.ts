@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import HTTPSTATUS from '~/constants/httpStatus.constants'
-import { REQUESTQUOTE_MESSAGE, SYSTEM_MESSAGE } from '~/constants/message.constants'
+import { REQUEST_QUOTE_MESSAGE, SYSTEM_MESSAGE } from '~/constants/message.constants'
 import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import databaseService from '~/services/database.services'
 
@@ -11,95 +11,95 @@ export const requestQuoteValidator = async (req: Request, res: Response, next: N
     {
       name: {
         notEmpty: {
-          errorMessage: REQUESTQUOTE_MESSAGE.NAME_IS_REQUIRED
+          errorMessage: REQUEST_QUOTE_MESSAGE.NAME_IS_REQUIRED
         },
         trim: true,
         isString: {
-          errorMessage: REQUESTQUOTE_MESSAGE.NAME_MUST_BE_A_STRING
+          errorMessage: REQUEST_QUOTE_MESSAGE.NAME_MUST_BE_A_STRING
         },
         isLength: {
           options: {
             min: 5,
             max: 100
           },
-          errorMessage: REQUESTQUOTE_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_50
+          errorMessage: REQUEST_QUOTE_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_50
         }
       },
       email: {
         notEmpty: {
-          errorMessage: REQUESTQUOTE_MESSAGE.EMAIL_IS_REQUIRED
+          errorMessage: REQUEST_QUOTE_MESSAGE.EMAIL_IS_REQUIRED
         },
         trim: true,
         isString: {
-          errorMessage: REQUESTQUOTE_MESSAGE.EMAIL_MUST_BE_A_STRING
+          errorMessage: REQUEST_QUOTE_MESSAGE.EMAIL_MUST_BE_A_STRING
         },
         isLength: {
           options: {
             min: 5,
             max: 100
           },
-          errorMessage: REQUESTQUOTE_MESSAGE.EMAIL_LENGTH_MUST_BE_FROM_5_TO_100
+          errorMessage: REQUEST_QUOTE_MESSAGE.EMAIL_LENGTH_MUST_BE_FROM_5_TO_100
         },
         isEmail: {
-          errorMessage: REQUESTQUOTE_MESSAGE.EMAIL_IS_NOT_VALID
+          errorMessage: REQUEST_QUOTE_MESSAGE.EMAIL_IS_NOT_VALID
         }
       },
       phone: {
         notEmpty: {
-          errorMessage: REQUESTQUOTE_MESSAGE.PHONE_IS_REQUIRED
+          errorMessage: REQUEST_QUOTE_MESSAGE.PHONE_IS_REQUIRED
         },
         trim: true,
         isString: {
-          errorMessage: REQUESTQUOTE_MESSAGE.PHONE_MUST_BE_A_STRING
+          errorMessage: REQUEST_QUOTE_MESSAGE.PHONE_MUST_BE_A_STRING
         },
         isLength: {
           options: {
             min: 10,
             max: 11
           },
-          errorMessage: REQUESTQUOTE_MESSAGE.PHONE_LENGTH_MUST_BE_FROM_10_TO_11
+          errorMessage: REQUEST_QUOTE_MESSAGE.PHONE_LENGTH_MUST_BE_FROM_10_TO_11
         },
         isMobilePhone: {
-          errorMessage: REQUESTQUOTE_MESSAGE.PHONE_IS_NOT_VALID
+          errorMessage: REQUEST_QUOTE_MESSAGE.PHONE_IS_NOT_VALID
         }
       },
       company: {
         optional: { options: { nullable: true } },
         trim: true,
         isString: {
-          errorMessage: REQUESTQUOTE_MESSAGE.COMPANY_MUST_BE_A_STRING
+          errorMessage: REQUEST_QUOTE_MESSAGE.COMPANY_MUST_BE_A_STRING
         },
         isLength: {
           options: {
             min: 1,
             max: 150
           },
-          errorMessage: REQUESTQUOTE_MESSAGE.COMPANY_LENGTH_MUST_BE_FROM_1_TO_150
+          errorMessage: REQUEST_QUOTE_MESSAGE.COMPANY_LENGTH_MUST_BE_FROM_1_TO_150
         }
       },
       message: {
         notEmpty: {
-          errorMessage: REQUESTQUOTE_MESSAGE.MESSAGE_IS_REQUIRED
+          errorMessage: REQUEST_QUOTE_MESSAGE.MESSAGE_IS_REQUIRED
         },
         trim: true,
         isString: {
-          errorMessage: REQUESTQUOTE_MESSAGE.MESSAGE_MUST_BE_A_STRING
+          errorMessage: REQUEST_QUOTE_MESSAGE.MESSAGE_MUST_BE_A_STRING
         },
         isLength: {
           options: {
             min: 1,
             max: 150
           },
-          errorMessage: REQUESTQUOTE_MESSAGE.MESSAGE_LENGTH_MUST_BE_FROM_1_TO_150
+          errorMessage: REQUEST_QUOTE_MESSAGE.MESSAGE_LENGTH_MUST_BE_FROM_1_TO_150
         }
       },
       product: {
         notEmpty: {
-          errorMessage: REQUESTQUOTE_MESSAGE.PRODUCT_LIST_IS_REQUIRED
+          errorMessage: REQUEST_QUOTE_MESSAGE.PRODUCT_LIST_IS_REQUIRED
         },
         isArray: {
           options: { min: 1, max: 50 },
-          errorMessage: REQUESTQUOTE_MESSAGE.PRODUCT_LIST_MUST_BE_AN_ARRAY
+          errorMessage: REQUEST_QUOTE_MESSAGE.PRODUCT_LIST_MUST_BE_AN_ARRAY
         },
         customSanitizer: {
           options: (value) => {
@@ -111,12 +111,12 @@ export const requestQuoteValidator = async (req: Request, res: Response, next: N
         custom: {
           options: async (value, { req }) => {
             if (!Array.isArray(value)) {
-              throw new Error(REQUESTQUOTE_MESSAGE.PRODUCT_LIST_MUST_BE_AN_ARRAY)
+              throw new Error(REQUEST_QUOTE_MESSAGE.PRODUCT_LIST_MUST_BE_AN_ARRAY)
             }
 
             const invalidIds = value.filter((id) => !ObjectId.isValid(id))
             if (invalidIds.length > 0) {
-              throw new Error(REQUESTQUOTE_MESSAGE.PRODUCT_ID_MUST_BE_A_VALID_OBJECT_ID)
+              throw new Error(REQUEST_QUOTE_MESSAGE.PRODUCT_ID_MUST_BE_A_VALID_OBJECT_ID)
             }
 
             const objectIds = value.map((id) => new ObjectId(id))
@@ -126,7 +126,7 @@ export const requestQuoteValidator = async (req: Request, res: Response, next: N
             })
 
             if (count !== objectIds.length) {
-              throw new Error(REQUESTQUOTE_MESSAGE.PRODUCT_NOT_FOUND)
+              throw new Error(REQUEST_QUOTE_MESSAGE.PRODUCT_NOT_FOUND)
             }
 
             ;(req as Request).productList = objectIds
@@ -166,13 +166,13 @@ export const requestQuoteIdValidator = async (req: Request, res: Response, next:
     id: {
       in: ['params'],
       notEmpty: {
-        errorMessage: REQUESTQUOTE_MESSAGE.REQUESTQUOTE_ID_IS_REQUIRED
+        errorMessage: REQUEST_QUOTE_MESSAGE.REQUESTQUOTE_ID_IS_REQUIRED
       },
       isString: {
-        errorMessage: REQUESTQUOTE_MESSAGE.REQUESTQUOTE_ID_MUST_BE_A_STRING
+        errorMessage: REQUEST_QUOTE_MESSAGE.REQUESTQUOTE_ID_MUST_BE_A_STRING
       },
       isMongoId: {
-        errorMessage: REQUESTQUOTE_MESSAGE.REQUESTQUOTE_ID_IS_MUST_BE_A_ID
+        errorMessage: REQUEST_QUOTE_MESSAGE.REQUESTQUOTE_ID_IS_MUST_BE_A_ID
       },
       custom: {
         options: async (value, { req }) => {
@@ -182,7 +182,7 @@ export const requestQuoteIdValidator = async (req: Request, res: Response, next:
           })
 
           if (!requestQuote) {
-            throw new Error(REQUESTQUOTE_MESSAGE.REQUESTQUOTE_ID_DOES_NOT_EXIST)
+            throw new Error(REQUEST_QUOTE_MESSAGE.REQUESTQUOTE_ID_DOES_NOT_EXIST)
           }
 
           ;(req as Request).requestQuote = requestQuote

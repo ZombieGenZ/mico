@@ -13,6 +13,9 @@ const router = express.Router()
  * Description: Lấy thông tin yêu cầu báo giá
  * Path: /api/request-quote
  * Method: GET
+ * headers: {
+ *    authorization?: Bearer <token>
+ * }
  */
 router.get('/', accessTokenValidator, wrapRequestHandler(getRequestQuoteController))
 
@@ -21,11 +24,11 @@ router.get('/', accessTokenValidator, wrapRequestHandler(getRequestQuoteControll
  * Path: /api/request-quote
  * Method: POST
  * Body: {
- *    name: string
- *    email: string
- *    phone: string
- *    company: string | null
- *    message: string
+ *    name: string,
+ *    email: string,
+ *    phone: string,
+ *    company: string | null,
+ *    message: string,
  *    product: string[]
  * }
  */
@@ -35,6 +38,9 @@ router.post('/', requestQuoteValidator, wrapRequestHandler(requestQuoteControlle
  * Description: Hoàn thành thông tin yêu cầu báo giá
  * Path: /api/request-quote/:id
  * Method: PUT
+ * headers: {
+ *    authorization?: Bearer <token>
+ * },
  */
 router.put('/:id', accessTokenValidator, requestQuoteIdValidator, wrapRequestHandler(completeRequestQuoteController))
 

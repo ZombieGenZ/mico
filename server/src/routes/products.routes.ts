@@ -31,23 +31,23 @@ router.get('/', wrapRequestHandler(getProductController))
  *    authorization?: Bearer <token>
  * },
  * Body: {
- *    title: string
- *    subtitle: string
+ *    title: string,
+ *    subtitle: string,
  *    technical_information: {
  *      code: string
  *      name: string
  *      value: string
  *      index: number
- *    }[]
+ *    }[],
  *    features: {
  *      value: string
  *      index: number
- *    }[]
- *    category_id: string
- *    brand_id: string
- *    in_stock: boolean
- *    is_new: boolean
- *    is_used: boolean
+ *    }[],
+ *    category_id: string,
+ *    brand_id: string,
+ *    in_stock: boolean,
+ *    is_new: boolean,
+ *    is_used: boolean,
  *    preview: file[]
  * }
  */
@@ -68,23 +68,23 @@ router.post(
  *    authorization?: Bearer <token>
  * },
  * Body: {
- *    title: string
- *    subtitle: string
+ *    title: string,
+ *    subtitle: string,
  *    technical_information: {
  *      code: string
  *      name: string
  *      value: string
  *      index: number
- *    }[]
+ *    }[],
  *    features: {
  *      value: string
  *      index: number
- *    }[]
- *    category_id: string
- *    brand_id: string
- *    in_stock: boolean
- *    is_new: boolean
- *    is_used: boolean
+ *    }[],
+ *    category_id: string,
+ *    brand_id: string,
+ *    in_stock: boolean,
+ *    is_new: boolean,
+ *    is_used: boolean,
  *    preview?: file[]
  * }
  */

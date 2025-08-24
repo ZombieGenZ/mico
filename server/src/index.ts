@@ -7,7 +7,7 @@ import path from 'path'
 import bodyParser from 'body-parser'
 import { defaultErrorHandler } from './middlewares/errors.middlewares'
 import expressUserAgent from 'express-useragent'
-import { initServiceInformation } from './state/serviceInformation.state'
+import { initServiceInformation } from './state/companyInformation.state'
 
 dotenv.config()
 const port = process.env.APP_PORT || 3000
@@ -59,6 +59,7 @@ import products from '~/routes/products.routes'
 import posts from '~/routes/posts.routes'
 import contacts from '~/routes/contacts.routes'
 import requestQuote from '~/routes/requestQuote.routes'
+import company from '~/routes/company.routes'
 
 app.use('/api/users', users)
 app.use('/api/categories', categories)
@@ -68,6 +69,7 @@ app.use('/api/products', products)
 app.use('/api/posts', posts)
 app.use('/api/contacts', contacts)
 app.use('/api/request-quote', requestQuote)
+app.use('/api/company', company)
 
 app.use(defaultErrorHandler)
 
