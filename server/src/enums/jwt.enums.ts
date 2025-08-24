@@ -1,4 +1,6 @@
 export enum TokenType {
   AccessToken,
-  RefreshToken
+  RefreshToken,
+  SecurityAuthenticationToken,
+  AdministratorPermissionToken
 }

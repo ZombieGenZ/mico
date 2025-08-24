@@ -173,3 +173,149 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
       return
     })
 }
+
+export const securityAuthenticationTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
+  checkSchema(
+    {
+      'x-admin-token': {
+        notEmpty: {
+          errorMessage: AUTHENTICATE_MESSAGE.SECURITY_AUTHENTICATION_TOKEN_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: AUTHENTICATE_MESSAGE.SECURITY_AUTHENTICATION_TOKEN_MUST_BE_A_STRING
+        },
+        custom: {
+          options: async (value, { req }) => {
+            try {
+              const decoded_security_authentication_token = (await verifyToken({
+                token: value,
+                secret: process.env.SECURITY_JWT_SECRET_SECURITY_AUTHENTICATION_TOKEN as string
+              })) as TokenPayload
+
+              if (
+                !decoded_security_authentication_token ||
+                decoded_security_authentication_token.token_type !== TokenType.SecurityAuthenticationToken ||
+                decoded_security_authentication_token.development_team !== process.env.DEVELOPMENT_TEAM ||
+                decoded_security_authentication_token.company_domain !== process.env.COMPANY_DOMAIN
+              ) {
+                throw new Error(AUTHENTICATE_MESSAGE.SECURITY_AUTHENTICATION_TOKEN_INVALID)
+              }
+
+              const user = await databaseService.users.findOne({
+                _id: new ObjectId(decoded_security_authentication_token.user_id)
+              })
+
+              if (!user) {
+                throw new Error(AUTHENTICATE_MESSAGE.USER_DOES_NOT_EXIST)
+              }
+
+              ;(req as Request).user = user
+            } catch {
+              throw new Error(AUTHENTICATE_MESSAGE.SECURITY_AUTHENTICATION_TOKEN_INVALID)
+            }
+
+            return true
+          }
+        }
+      }
+    },
+    ['headers']
+  )
+    .run(req)
+    .then(() => {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        removeUploadedFiles(req)
+        res.status(HTTPSTATUS.UNAUTHORIZED).json({
+          code: RESPONSE_CODE.AUTHENTICATION_FAILED,
+          message: AUTHENTICATE_MESSAGE.AUTHENTICATION_FAILED,
+          errors: errors.mapped()
+        })
+        return
+      }
+      next()
+      return
+    })
+    .catch((err) => {
+      removeUploadedFiles(req)
+      res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+        code: RESPONSE_CODE.FATAL_AUTHENTICATION_FAILURE,
+        message: err
+      })
+      return
+    })
+}
+
+export const administratorPermissionTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
+  checkSchema(
+    {
+      'x-security-challenge': {
+        notEmpty: {
+          errorMessage: AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_MUST_BE_A_STRING
+        },
+        custom: {
+          options: async (value, { req }) => {
+            try {
+              const decoded_administrator_permission_token = (await verifyToken({
+                token: value,
+                secret: process.env.SECURITY_JWT_SECRET_ADMINISTRATOR_PERMISSION_TOKEN as string
+              })) as TokenPayload
+
+              if (
+                !decoded_administrator_permission_token ||
+                decoded_administrator_permission_token.token_type !== TokenType.AdministratorPermissionToken ||
+                decoded_administrator_permission_token.development_team !== process.env.DEVELOPMENT_TEAM ||
+                decoded_administrator_permission_token.company_domain !== process.env.COMPANY_DOMAIN
+              ) {
+                throw new Error(AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_INVALID)
+              }
+
+              const user = await databaseService.users.findOne({
+                _id: new ObjectId(decoded_administrator_permission_token.user_id)
+              })
+
+              if (!user) {
+                throw new Error(AUTHENTICATE_MESSAGE.USER_DOES_NOT_EXIST)
+              }
+
+              ;(req as Request).user = user
+            } catch {
+              throw new Error(AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_INVALID)
+            }
+
+            return true
+          }
+        }
+      }
+    },
+    ['headers']
+  )
+    .run(req)
+    .then(() => {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        removeUploadedFiles(req)
+        res.status(HTTPSTATUS.UNAUTHORIZED).json({
+          code: RESPONSE_CODE.AUTHENTICATION_FAILED,
+          message: AUTHENTICATE_MESSAGE.AUTHENTICATION_FAILED,
+          errors: errors.mapped()
+        })
+        return
+      }
+      next()
+      return
+    })
+    .catch((err) => {
+      removeUploadedFiles(req)
+      res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+        code: RESPONSE_CODE.FATAL_AUTHENTICATION_FAILURE,
+        message: err
+      })
+      return
+    })
+}

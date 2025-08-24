@@ -12,7 +12,13 @@ export const AUTHENTICATE_MESSAGE = {
   REFRESH_TOKEN_INVALID: 'Refresh token không hợp lệ',
   AUTHENTICATION_FAILED: 'Yêu cầu xác thực trước khi thực hiện hành động này',
   YOU_DONT_HAVE_PERMISSION_TO_DO_THIS: 'Bạn không có quyền làm điều này',
-  TOKEN_PAIR_MISMATCH: 'Mã xác thực không hợp lệ'
+  TOKEN_PAIR_MISMATCH: 'Mã xác thực không hợp lệ',
+  SECURITY_AUTHENTICATION_TOKEN_IS_REQUIRED: 'Không được bỏ trống Security authentication token',
+  SECURITY_AUTHENTICATION_TOKEN_MUST_BE_A_STRING: 'Security authentication token phải là một chuỗi ký tự',
+  SECURITY_AUTHENTICATION_TOKEN_INVALID: 'Security authentication token không hợp lệ',
+  ADMINISTRATOR_PERMISSION_TOKEN_IS_REQUIRED: 'Không được bỏ trống Administrator permission token',
+  ADMINISTRATOR_PERMISSION_TOKEN_MUST_BE_A_STRING: 'Administrator permission token phải là một chuỗi ký tự',
+  ADMINISTRATOR_PERMISSION_TOKEN_INVALID: 'Administrator permission token không hợp lệ'
 } as const
 
 export const USER_MESSAGE = {
