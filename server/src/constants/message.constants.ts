@@ -16,9 +16,9 @@ export const AUTHENTICATE_MESSAGE = {
   SECURITY_AUTHENTICATION_TOKEN_IS_REQUIRED: 'Không được bỏ trống Security authentication token',
   SECURITY_AUTHENTICATION_TOKEN_MUST_BE_A_STRING: 'Security authentication token phải là một chuỗi ký tự',
   SECURITY_AUTHENTICATION_TOKEN_INVALID: 'Security authentication token không hợp lệ',
-  ADMINISTRATOR_PERMISSION_TOKEN_IS_REQUIRED: 'Không được bỏ trống Administrator permission token',
-  ADMINISTRATOR_PERMISSION_TOKEN_MUST_BE_A_STRING: 'Administrator permission token phải là một chuỗi ký tự',
-  ADMINISTRATOR_PERMISSION_TOKEN_INVALID: 'Administrator permission token không hợp lệ'
+  TEMPORARY_2FA_TOKEN_IS_REQUIRED: 'Không được bỏ trống Temporary 2fa token',
+  TEMPORARY_2FA_TOKEN_MUST_BE_A_STRING: 'Temporary 2fa token phải là một chuỗi ký tự',
+  TEMPORARY_2FA_TOKEN_INVALID: 'Temporary 2fa token không hợp lệ'
 } as const
 
 export const USER_MESSAGE = {

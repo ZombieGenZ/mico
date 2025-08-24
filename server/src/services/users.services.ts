@@ -78,13 +78,13 @@ class UserService {
     return signToken({
       payload: {
         user_id: user_id,
-        token_type: TokenType.AdministratorPermissionToken,
+        token_type: TokenType.Temporary2faToken,
         development_team: process.env.DEVELOPMENT_TEAM as string,
         company_domain: process.env.COMPANY_DOMAIN as string
       },
-      privateKey: process.env.SECURITY_JWT_SECRET_ADMINISTRATOR_PERMISSION_TOKEN as string,
+      privateKey: process.env.SECURITY_JWT_SECRET_TEMPORARY_2FA_TOKEN as string,
       options: {
-        expiresIn: process.env.SECURITY_ADMINISTRATOR_PERMISSION_TOKEN_EXPIRES_IN as any
+        expiresIn: process.env.SECURITY_TEMPORARY_2FA_EXPIRES_IN as any
       }
     })
   }

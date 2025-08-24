@@ -2,5 +2,5 @@ export enum TokenType {
   AccessToken,
   RefreshToken,
   SecurityAuthenticationToken,
-  AdministratorPermissionToken
+  Temporary2faToken
 }

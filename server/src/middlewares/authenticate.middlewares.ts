@@ -247,36 +247,36 @@ export const securityAuthenticationTokenValidator = async (req: Request, res: Re
     })
 }
 
-export const administratorPermissionTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
+export const temporary2faTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(
     {
       'x-security-challenge': {
         notEmpty: {
-          errorMessage: AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_IS_REQUIRED
+          errorMessage: AUTHENTICATE_MESSAGE.TEMPORARY_2FA_TOKEN_IS_REQUIRED
         },
         trim: true,
         isString: {
-          errorMessage: AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_MUST_BE_A_STRING
+          errorMessage: AUTHENTICATE_MESSAGE.TEMPORARY_2FA_TOKEN_MUST_BE_A_STRING
         },
         custom: {
           options: async (value, { req }) => {
             try {
-              const decoded_administrator_permission_token = (await verifyToken({
+              const decoded_temporary_2fa_token = (await verifyToken({
                 token: value,
-                secret: process.env.SECURITY_JWT_SECRET_ADMINISTRATOR_PERMISSION_TOKEN as string
+                secret: process.env.SECURITY_JWT_SECRET_TEMPORARY_2FA_TOKEN as string
               })) as TokenPayload
 
               if (
-                !decoded_administrator_permission_token ||
-                decoded_administrator_permission_token.token_type !== TokenType.AdministratorPermissionToken ||
-                decoded_administrator_permission_token.development_team !== process.env.DEVELOPMENT_TEAM ||
-                decoded_administrator_permission_token.company_domain !== process.env.COMPANY_DOMAIN
+                !decoded_temporary_2fa_token ||
+                decoded_temporary_2fa_token.token_type !== TokenType.Temporary2faToken ||
+                decoded_temporary_2fa_token.development_team !== process.env.DEVELOPMENT_TEAM ||
+                decoded_temporary_2fa_token.company_domain !== process.env.COMPANY_DOMAIN
               ) {
-                throw new Error(AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_INVALID)
+                throw new Error(AUTHENTICATE_MESSAGE.TEMPORARY_2FA_TOKEN_INVALID)
               }
 
               const user = await databaseService.users.findOne({
-                _id: new ObjectId(decoded_administrator_permission_token.user_id)
+                _id: new ObjectId(decoded_temporary_2fa_token.user_id)
               })
 
               if (!user) {
@@ -285,7 +285,7 @@ export const administratorPermissionTokenValidator = async (req: Request, res: R
 
               ;(req as Request).user = user
             } catch {
-              throw new Error(AUTHENTICATE_MESSAGE.ADMINISTRATOR_PERMISSION_TOKEN_INVALID)
+              throw new Error(AUTHENTICATE_MESSAGE.TEMPORARY_2FA_TOKEN_INVALID)
             }
 
             return true
