@@ -13,7 +13,7 @@ import BrandsServices from '../services/brandsServices';
 
 
 const vehicleService = new VehicleServices();
-const brandService = new BrandsServices();
+const brandServices = new BrandsServices();
 
 const Vehicles: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -57,7 +57,7 @@ const Vehicles: React.FC = () => {
   useEffect(() => {
     const loadBrandNames = async () => {
       try {
-        const brandsData = await brandService.getBrands();
+        const brandsData = await brandServices.getBrands();
         const brandMap: Record<string, string> = {};
         brandsData.forEach(brand => {
           if (brand._id) {

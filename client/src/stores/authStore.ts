@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User } from '../lib/types';
 import UserServices from '../services/userServices';
+import { UserType } from '../types/userTypes';
+import Cookies from 'js-cookie';
 
 const userServices = new UserServices();
 
 interface AuthState {
-  user: User | null;
+  user: UserType | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -20,25 +21,23 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       
       login: async (email: string, password: string) => {
-        // Mock authentication - in real app, this would be an API call
-        const isLogin = await userServices.login(email, password);
-        if (isLogin) {
-          // const user = await userServices.getUserInfo(isLogin._id);
-          // set({ user, isAuthenticated: true });
-          return true;
+        try {
+          const tokenResponse = await userServices.login(email, password);
+          if (tokenResponse) {
+            const user = await userServices.getUserInfo(tokenResponse.authenticate.access_token);
+            console.log(user)
+            Cookies.set('refreshToken', tokenResponse.authenticate.refresh_token, { expires: 30 });
+            Cookies.set('accessToken', tokenResponse.authenticate.access_token, { expires: 30 });
+            set({ user: user, isAuthenticated: true });
+            return true;
+          } else {
+            set({ user: null, isAuthenticated: false });
+            return false;
+          }
+        } catch {
+          set({ user: null, isAuthenticated: false });
+          return false;
         }
-        if (email === 'admin@xecongtrinhvn.com' && password === 'XeCoTr2024!') {
-          const user: User = {
-            id: 1,
-            email: 'admin@xecongtrinhvn.com',
-            name: 'Admin',
-            role: 'admin',
-            avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100'
-          };
-          set({ user, isAuthenticated: true });
-          return true;
-        }
-        return false;
       },
       
       logout: () => {

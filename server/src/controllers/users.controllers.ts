@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { omit } from 'lodash'

@@ -33,7 +33,7 @@ const Login: React.FC = () => {
         toast.success('Đăng nhập thành công!');
         navigate(ROUTES.ADMIN_DASHBOARD);
       } else {
-        toast.error('Email hoặc mật khẩu không chính xác!');
+        toast.error('Email hoặc mật khẩu không chính xác. Vui lòng thử lại sau!');
       }
     } catch {
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');

@@ -34,7 +34,7 @@ const AdminHeader: React.FC = () => {
           {/* User Menu */}
           <div className="flex items-center space-x-3 border-l pl-4">
             <img
-              src={user?.avatar || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100'}
+              src={'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100'}
               alt={user?.name}
               className="h-8 w-8 rounded-full object-cover"
             />

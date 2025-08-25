@@ -3,7 +3,8 @@ import {
   loginController,
   logoutController,
   registerController,
-  verifyTokenController
+  verifyTokenController,
+  infomationController
 } from '~/controllers/users.controllers'
 import { accessTokenValidator, refreshTokenValidator } from '~/middlewares/authenticate.middlewares'
 import { loginValidator, registerValidator } from '~/middlewares/users.middlewares'
@@ -66,6 +67,6 @@ router.post('/verify-token', refreshTokenValidator, wrapRequestHandler(verifyTok
  *    authorization?: Bearer <token>
  * }
  */
-router.post('/infomation', accessTokenValidator, wrapRequestHandler(verifyTokenController))
+router.get('/infomation', accessTokenValidator, wrapRequestHandler(infomationController))
 
 export default router
