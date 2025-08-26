@@ -4,6 +4,8 @@ import { Toaster } from 'react-hot-toast';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import LottieLoader from './components/loading/LottieLoader';
+import Cookies from 'js-cookie';
+import { useAuthStore } from './stores/authStore';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -34,6 +36,7 @@ import { ROUTES } from './lib/constants';
 
 function App() {
   const [appLoading, setAppLoading] = React.useState(true);
+  const { checkAuth } = useAuthStore();
   
   useEffect(() => {
     AOS.init({
@@ -49,6 +52,21 @@ function App() {
     
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const runAuthCheck = () => {
+      const at = Cookies.get('accessToken') || '';
+      const rt = Cookies.get('refreshToken') || '';
+      checkAuth(at, rt);
+    };
+
+    // run immediately on mount
+    runAuthCheck();
+
+    // then every 15 minutes
+    const intervalId = setInterval(runAuthCheck, 15 * 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, [checkAuth]);
   
   if (appLoading) {
     return <LottieLoader onComplete={() => setAppLoading(false)} duration={6000} />;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Grid, List, Heart, Eye, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { categories } from '../lib/mockData';
+// import { categories } from '../lib/mockData'; // replaced by API-driven categories
 import { useVehicleStore } from '../stores/vehicleStore';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -10,16 +10,19 @@ import Input from '../components/ui/Input';
 import VehicleServices from '../services/vehicleServices';
 import { Vehicle } from '../types/vehicleTypes';
 import BrandsServices from '../services/brandsServices';
+import CategoriesServices from '../services/categoriesServices';
 
 
 const vehicleService = new VehicleServices();
 const brandServices = new BrandsServices();
+const categoriesServices = new CategoriesServices();
 
 const Vehicles: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
   const [brandNames, setBrandNames] = useState<Record<string, string>>({});
+  const [categoryNames, setCategoryNames] = useState<Record<string, string>>({});
   
   const {
     searchTerm,
@@ -72,27 +75,37 @@ const Vehicles: React.FC = () => {
     
     loadBrandNames();
   }, []);
+
+  // Load category names when component mounts
+  useEffect(() => {
+    const loadCategoryNames = async () => {
+      try {
+        const categoriesData = await categoriesServices.getCategories();
+        const categoryMap: Record<string, string> = {};
+        categoriesData.forEach((category: { _id?: string; name: string }) => {
+          if (category._id) {
+            categoryMap[category._id] = category.name;
+          }
+        });
+        setCategoryNames(categoryMap);
+      } catch (error) {
+        console.error('Error loading category names:', error);
+      }
+    };
+    loadCategoryNames();
+  }, []);
   
   const filteredVehicles = getFilteredVehicles();
   
-  // Get unique brands from vehicles
-  const brands = Array.from(new Set(
-    filteredVehicles
-      .map(v => v.brand_id)
-      .filter(Boolean)
-  )).sort();
+  // Get unique brands from loaded brand names
+  const brands = Object.keys(brandNames);
   
-  // Get unique categories from vehicles
-  const vehicleCategories = Array.from(new Set(
-    filteredVehicles
-      .map(v => v.category_id)
-      .filter(Boolean)
-  ));
+  // Get categories from loaded category names
+  const vehicleCategories = Object.keys(categoryNames);
   
-  // Helper function to get category name by ID
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id.toString() === categoryId);
-    return category?.name || categoryId;
+  // Helper function to get category name by ID (sync from state)
+  const getCategoryName = (categoryId: string): string => {
+    return categoryNames[categoryId] || categoryId;
   };
   
   // Helper function to get brand name by ID (sync from state)

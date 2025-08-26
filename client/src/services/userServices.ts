@@ -20,8 +20,29 @@ export default class UserServices {
         return response.data.infomation
     }
 
-    async authenticAccessToken(accessToken: string) {
-        const response = await axios.post(`${this.apiUrl}/users/verify-token`, accessToken)
+    async logout(refresh_token: string) {
+        const response = await axios.delete(`${this.apiUrl}/users/logout`, {
+            data: {
+                refresh_token: refresh_token
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return response.data
+    }
+
+    async authenticAccessToken(accessToken: string, refresh_token: string) {
+        const response = await axios.post(`${this.apiUrl}/users/verify-token`,
+            {
+                refresh_token: refresh_token
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
         return response.data
     }
 }

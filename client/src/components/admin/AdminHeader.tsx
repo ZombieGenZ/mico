@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Search, User, LogOut } from 'lucide-react';
+import { Bell, Search, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 
 const AdminHeader: React.FC = () => {
