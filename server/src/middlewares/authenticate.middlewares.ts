@@ -177,7 +177,7 @@ export const refreshTokenValidator = async (req: Request, res: Response, next: N
 export const securityAuthenticationTokenValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(
     {
-      'x-admin-token': {
+      'x-security-token': {
         notEmpty: {
           errorMessage: AUTHENTICATE_MESSAGE.SECURITY_AUTHENTICATION_TOKEN_IS_REQUIRED
         },
@@ -281,6 +281,10 @@ export const temporary2faTokenValidator = async (req: Request, res: Response, ne
 
               if (!user) {
                 throw new Error(AUTHENTICATE_MESSAGE.USER_DOES_NOT_EXIST)
+              }
+
+              if (!user.twoFactorEnabled || !user.twoFactorSecret) {
+                throw new Error(AUTHENTICATE_MESSAGE.TEMPORARY_2FA_TOKEN_INVALID)
               }
 
               ;(req as Request).user = user

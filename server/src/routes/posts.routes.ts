@@ -28,7 +28,7 @@ router.get('/', wrapRequestHandler(getPostController))
  * Path: /api/posts
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    title: string,
@@ -53,7 +53,7 @@ router.post(
  * Path: /api/posts/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    title: string,
@@ -79,7 +79,7 @@ router.put(
  * Path: /api/posts/:id
  * Method: DELETE
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.delete('/:id', accessTokenValidator, postIdValidator, wrapRequestHandler(deletePostController))

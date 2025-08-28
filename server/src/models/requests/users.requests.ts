@@ -13,3 +13,13 @@ export interface LoginRequestBody {
 export interface AuthRequestBody {
   refresh_token: string
 }
+
+export interface ChangePasswordRequestBody {
+  password: string
+  new_password: string
+  confirm_new_password: string
+}
+
+export interface Verify2faRequestBody {
+  token: string
+}

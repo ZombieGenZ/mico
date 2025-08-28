@@ -22,7 +22,7 @@ router.get('/', wrapRequestHandler(getBrandController))
  * Path: /api/brands
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -36,7 +36,7 @@ router.post('/', accessTokenValidator, brandValidator, wrapRequestHandler(create
  * Path: /api/brands/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -50,7 +50,7 @@ router.put('/:id', accessTokenValidator, brandValidator, brandIdValidator, wrapR
  * Path: /api/brands/:id
  * Method: DELETE
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.delete('/:id', accessTokenValidator, brandIdValidator, wrapRequestHandler(deleteBrandController))

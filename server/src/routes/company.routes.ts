@@ -26,7 +26,7 @@ router.get('/', wrapRequestHandler(getCompanyInfomationController))
  * Path: /api/company
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -44,7 +44,7 @@ router.post('/', accessTokenValidator, changeCompanyCoreValidator, wrapRequestHa
  * Path: /api/company/contact
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    hotline: string,
@@ -68,7 +68,7 @@ router.post(
  * Path: /api/company/social
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    facebook: string,

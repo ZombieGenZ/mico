@@ -1,11 +1,14 @@
 import { TokenType } from '~/enums/jwt.enums'
-import { RegisterRequestBody } from '~/models/requests/users.requests'
+import { ChangePasswordRequestBody, RegisterRequestBody } from '~/models/requests/users.requests'
 import { signToken } from '~/utils/jwt.utils'
 import databaseService from './database.services'
 import User from '~/models/schemas/users.schemas'
 import { HashPassword } from '~/utils/encryption.utils'
 import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import { ObjectId } from 'mongodb'
+import speakeasy from 'speakeasy'
+import { getServiceInformation } from '~/state/companyInformation.state'
+import QRCode from 'qrcode'
 
 class UserService {
   async checkEmailExits(email: string) {
@@ -22,6 +25,11 @@ class UserService {
     )
   }
   async login(user: User, ip?: string, device?: string, os?: string) {
+    if (user.twoFactorEnabled) {
+      const temporary2faToken = await this.signTemporary2faToken(user._id.toString())
+      return [temporary2faToken, null]
+    }
+
     const authenticate = await this.signAccessTokenAndRefreshToken(user._id.toString())
     await this.insertRefreshToken(user._id.toString(), authenticate[1], ip, device, os)
 
@@ -116,6 +124,146 @@ class UserService {
         }
       }
     )
+  }
+  async changePassword(user: User, payload: ChangePasswordRequestBody) {
+    await Promise.all([
+      databaseService.users.updateOne(
+        {
+          _id: user._id
+        },
+        {
+          $set: {
+            password: HashPassword(payload.new_password)
+          },
+          $currentDate: {
+            updated_at: true
+          }
+        }
+      ),
+      databaseService.refreshToken.deleteMany({
+        user_id: user._id
+      })
+    ])
+  }
+  async verifyAccess(user: User) {
+    return await this.signSecurityAuthenticationToken(user._id.toString())
+  }
+  async setup2fa(user: User) {
+    const secret = speakeasy.generateSecret({
+      name: `User ${user._id} (${user.email})`,
+      issuer: `Company ${getServiceInformation().company.name}`,
+      length: 32
+    })
+
+    await databaseService.users.updateOne(
+      {
+        _id: user._id
+      },
+      {
+        $set: {
+          twoFactorSecret: secret.base32
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+
+    const qrCodeUrl = speakeasy.otpauthURL({
+      secret: secret.ascii,
+      label: `${getServiceInformation().company.name} - ${user.email}`,
+      issuer: `Company ${getServiceInformation().company.name}`,
+      encoding: 'ascii'
+    })
+
+    const qrCodeImage = await QRCode.toDataURL(qrCodeUrl)
+
+    return {
+      secret: secret.base32,
+      qr: qrCodeImage,
+      manualEntryKey: secret.base32
+    }
+  }
+  async verify2fa(user: User, token: string) {
+    if (user.twoFactorEnabled) {
+      return false
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret as string,
+      encoding: 'base32',
+      token: token,
+      window: 1 // Cho phép sai lệch 1 time steps (30 giây)
+    })
+
+    if (verified) {
+      await Promise.all([
+        databaseService.users.updateOne(
+          {
+            _id: user._id
+          },
+          {
+            $set: {
+              twoFactorEnabled: true
+            },
+            $currentDate: {
+              updated_at: true
+            }
+          }
+        ),
+        databaseService.refreshToken.deleteMany({
+          _id: user._id
+        })
+      ])
+    }
+
+    return verified
+  }
+  async disable2fa(user: User) {
+    await databaseService.users.updateOne(
+      {
+        _id: user._id
+      },
+      {
+        $set: {
+          twoFactorEnabled: false,
+          twoFactorSecret: null
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+  }
+  async validate2fa(user: User, token: string) {
+    if (!user.twoFactorEnabled) {
+      return {
+        verified: false,
+        authenticate: null
+      }
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret as string,
+      encoding: 'base32',
+      token: token,
+      window: 0 // Không cho phép sai lệch time steps
+    })
+
+    if (verified) {
+      const authenticate = await this.signAccessTokenAndRefreshToken(user._id.toString())
+      await this.insertRefreshToken(user._id.toString(), authenticate[1])
+
+      return {
+        verified,
+        authenticate
+      }
+    } else {
+      return {
+        verified,
+        authenticate: null
+      }
+    }
   }
 }
 

@@ -10,7 +10,7 @@ const router = express.Router()
  * Path: /api/contacts
  * Method: GET
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.get('/', accessTokenValidator, wrapRequestHandler(getContactController))
@@ -35,7 +35,7 @@ router.post('/', contactValidator, wrapRequestHandler(contactController))
  * Path: /api/contacts/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  */
 router.put('/:id', accessTokenValidator, contactIdValidator, wrapRequestHandler(completeContactController))

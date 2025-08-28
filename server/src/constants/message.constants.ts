@@ -54,7 +54,27 @@ export const USER_MESSAGE = {
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Xác nhận mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt',
   CONFIRM_PASSWORD_DOES_NOT_MATCH_PASSWORD: 'Xác nhận mật khẩu phải khớp với mật khẩu',
-  INCORRECT_EMAIL_OR_PASSWORD: 'Địa chỉ email hoặc mật khẩu không chính xác'
+  INCORRECT_EMAIL_OR_PASSWORD: 'Địa chỉ email hoặc mật khẩu không chính xác',
+  CHANGE_PASSWORD_SUCCESS: 'Thay đổi mật khẩu thành công',
+  CHANGE_PASSWORD_FAILURE: 'Thay đổi mật khẩu thất bại',
+  VERIFY_ACCESS_SUCCESS: 'Xác nhận quyền truy cập thành công',
+  VERIFY_ACCESS_FAILURE: 'Xác nhận quyền truy cập thất bại',
+  INCORRECT_PASSWORD: 'Mật khẩu hiện tại không chính xác',
+  NEW_PASSWORD_MUST_BE_DIFFERENT_FROM_OLD_PASSWORD: 'Mật khẩu mới phải khác với mật khẩu hiện tại',
+  SETUP_2FA_SUCCESS: 'Chuẩn bị thiết lập xác minh 2FA thành công',
+  SETUP_2FA_FAILURE: 'Chuẩn bị thiết lập xác minh 2FA thất bại',
+  VERIFY_2FA_SUCCESS: 'Xác nhận thiết lập xác minh 2FA thành công',
+  VERIFY_2FA_FAILURE: 'Xác nhận thiết lập xác minh 2FA thất bại',
+  DISABLE_2FA_SUCCESS: 'Vô hiệu hóa thiết lập xác minh 2FA thành công',
+  DISABLE_2FA_FAILURE: 'Vô hiệu hóa thiết lập xác minh 2FA thất bại',
+  VALIDATE_2FA_SUCCESS: 'Xác minh 2FA thành công',
+  VALIDATE_2FA_FAILURE: 'Xác minh 2FA thất bại',
+  OTP_CODE_IS_REQUIRED: 'Mã OTP là bắt buộc',
+  OTP_CODE_MUST_BE_A_STRING: 'Mã OTP phải là chuỗi',
+  OTP_CODE_INVALID_LENGTH: 'Mã OTP phải có 6 chữ số',
+  OTP_CODE_MUST_BE_NUMERIC: 'Mã OTP chỉ được chứa số',
+  TWO_FACTOR_NOT_ENABLED: '2FA chưa được kích hoạt cho tài khoản này',
+  TWO_FACTOR_SECRET_NOT_FOUND: 'Không tìm thấy secret key 2FA'
 }
 
 export const CATEGORY_MESSAGE = {

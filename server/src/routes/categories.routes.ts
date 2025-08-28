@@ -22,7 +22,7 @@ router.get('/', wrapRequestHandler(getCategoryController))
  * Path: /api/categories
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -36,7 +36,7 @@ router.post('/', accessTokenValidator, categoryValidator, wrapRequestHandler(cre
  * Path: /api/categories/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -56,7 +56,7 @@ router.put(
  * Path: /api/categories/:id
  * Method: DELETE
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.delete('/:id', accessTokenValidator, categoryIdValidator, wrapRequestHandler(deleteCategoryController))

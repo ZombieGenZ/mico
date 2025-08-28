@@ -22,7 +22,7 @@ router.get('/', wrapRequestHandler(getTopicController))
  * Path: /api/topics
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -36,7 +36,7 @@ router.post('/', accessTokenValidator, topicValidator, wrapRequestHandler(create
  * Path: /api/topics/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    name: string,
@@ -50,7 +50,7 @@ router.put('/:id', accessTokenValidator, topicIdValidator, topicValidator, wrapR
  * Path: /api/topics/:id
  * Method: DELETE
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.delete('/:id', accessTokenValidator, topicIdValidator, wrapRequestHandler(deleteTopicController))

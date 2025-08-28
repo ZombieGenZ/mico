@@ -14,7 +14,7 @@ const router = express.Router()
  * Path: /api/request-quote
  * Method: GET
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.get('/', accessTokenValidator, wrapRequestHandler(getRequestQuoteController))
@@ -39,7 +39,7 @@ router.post('/', requestQuoteValidator, wrapRequestHandler(requestQuoteControlle
  * Path: /api/request-quote/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  */
 router.put('/:id', accessTokenValidator, requestQuoteIdValidator, wrapRequestHandler(completeRequestQuoteController))

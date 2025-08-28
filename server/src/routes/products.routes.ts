@@ -28,7 +28,7 @@ router.get('/', wrapRequestHandler(getProductController))
  * Path: /api/products
  * Method: POST
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    title: string,
@@ -65,7 +65,7 @@ router.post(
  * Path: /api/products/:id
  * Method: PUT
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * },
  * Body: {
  *    title: string,
@@ -103,7 +103,7 @@ router.put(
  * Path: /api/products/:id
  * Method: DELETE
  * headers: {
- *    authorization?: Bearer <token>
+ *    authorization: Bearer <token>
  * }
  */
 router.delete('/:id', accessTokenValidator, productIdValidator, wrapRequestHandler(deleteProductController))

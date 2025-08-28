@@ -6,6 +6,7 @@ import HTTPSTATUS from '~/constants/httpStatus.constants'
 import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import databaseService from '~/services/database.services'
 import { HashPassword } from '~/utils/encryption.utils'
+import User from '~/models/schemas/users.schemas'
 
 export const registerValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(
@@ -192,6 +193,226 @@ export const loginValidator = async (req: Request, res: Response, next: NextFunc
         trim: true,
         isString: {
           errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_A_STRING
+        }
+      }
+    },
+    ['body']
+  )
+    .run(req)
+    .then(() => {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+          code: RESPONSE_CODE.INPUT_DATA_ERROR,
+          message: SYSTEM_MESSAGE.VALIDATION_ERROR,
+          errors: errors.mapped()
+        })
+        return
+      }
+      next()
+      return
+    })
+    .catch((err) => {
+      res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+        code: RESPONSE_CODE.FATAL_INPUT_ERROR,
+        message: err
+      })
+      return
+    })
+}
+
+export const changePasswordValidator = async (req: Request, res: Response, next: NextFunction) => {
+  checkSchema(
+    {
+      password: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.PASSWORD_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_A_STRING
+        },
+        custom: {
+          options: async (value, { req }) => {
+            const user = (req as Request).user as User
+
+            const result = await databaseService.users.findOne({
+              email: user.email,
+              password: HashPassword(value)
+            })
+
+            if (!result) {
+              throw new Error(USER_MESSAGE.INCORRECT_PASSWORD)
+            }
+
+            return true
+          }
+        }
+      },
+      new_password: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.PASSWORD_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: {
+            min: 8,
+            max: 100
+          },
+          errorMessage: USER_MESSAGE.PASSWORD_LENGTH_MUST_BE_FROM_8_TO_100
+        },
+        isStrongPassword: {
+          errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG
+        },
+        custom: {
+          options: async (value, { req }) => {
+            if (value === req.body.password) {
+              throw new Error(USER_MESSAGE.NEW_PASSWORD_MUST_BE_DIFFERENT_FROM_OLD_PASSWORD)
+            }
+
+            return true
+          }
+        }
+      },
+      confirm_new_password: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.CONFIRM_PASSWORD_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: USER_MESSAGE.CONFIRM_PASSWORD_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: {
+            min: 8,
+            max: 100
+          },
+          errorMessage: USER_MESSAGE.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_100
+        },
+        isStrongPassword: {
+          errorMessage: USER_MESSAGE.CONFIRM_PASSWORD_MUST_BE_STRONG
+        },
+        custom: {
+          options: async (value, { req }) => {
+            if (value !== req.body.new_password) {
+              throw new Error(USER_MESSAGE.CONFIRM_PASSWORD_DOES_NOT_MATCH_PASSWORD)
+            }
+
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+    .run(req)
+    .then(() => {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+          code: RESPONSE_CODE.INPUT_DATA_ERROR,
+          message: SYSTEM_MESSAGE.VALIDATION_ERROR,
+          errors: errors.mapped()
+        })
+        return
+      }
+      next()
+      return
+    })
+    .catch((err) => {
+      res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+        code: RESPONSE_CODE.FATAL_INPUT_ERROR,
+        message: err
+      })
+      return
+    })
+}
+
+export const verifyAccessValidator = async (req: Request, res: Response, next: NextFunction) => {
+  checkSchema(
+    {
+      password: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.PASSWORD_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_A_STRING
+        },
+        custom: {
+          options: async (value, { req }) => {
+            const user = (req as Request).user as User
+
+            const result = await databaseService.users.findOne({
+              email: user.email,
+              password: HashPassword(value)
+            })
+
+            if (!result) {
+              throw new Error(USER_MESSAGE.INCORRECT_PASSWORD)
+            }
+
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+    .run(req)
+    .then(() => {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+          code: RESPONSE_CODE.INPUT_DATA_ERROR,
+          message: SYSTEM_MESSAGE.VALIDATION_ERROR,
+          errors: errors.mapped()
+        })
+        return
+      }
+      next()
+      return
+    })
+    .catch((err) => {
+      res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+        code: RESPONSE_CODE.FATAL_INPUT_ERROR,
+        message: err
+      })
+      return
+    })
+}
+
+export const verify2faValidator = async (req: Request, res: Response, next: NextFunction) => {
+  checkSchema(
+    {
+      token: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.OTP_CODE_IS_REQUIRED
+        },
+        trim: true,
+        isString: {
+          errorMessage: USER_MESSAGE.OTP_CODE_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { min: 6, max: 6 },
+          errorMessage: USER_MESSAGE.OTP_CODE_INVALID_LENGTH
+        },
+        isNumeric: {
+          errorMessage: USER_MESSAGE.OTP_CODE_MUST_BE_NUMERIC
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            const user = (req as Request).user as User
+
+            if (!user.twoFactorSecret) {
+              throw new Error(USER_MESSAGE.TWO_FACTOR_SECRET_NOT_FOUND)
+            }
+
+            return true
+          }
         }
       }
     },

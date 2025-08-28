@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { omit } from 'lodash'
@@ -8,7 +9,13 @@ import { AUTHENTICATE_MESSAGE, USER_MESSAGE } from '~/constants/message.constant
 import { RESPONSE_CODE } from '~/constants/responseCode.constants'
 import { TokenType } from '~/enums/jwt.enums'
 import { TokenPayload } from '~/models/requests/authentication.requests'
-import { AuthRequestBody, LoginRequestBody, RegisterRequestBody } from '~/models/requests/users.requests'
+import {
+  AuthRequestBody,
+  ChangePasswordRequestBody,
+  LoginRequestBody,
+  RegisterRequestBody,
+  Verify2faRequestBody
+} from '~/models/requests/users.requests'
 import RefreshToken from '~/models/schemas/refreshToken.schemas'
 import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
@@ -72,10 +79,15 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
     res.json({
       code: RESPONSE_CODE.LOGIN_SUCCESSFUL,
       message: USER_MESSAGE.LOGIN_SUCCESS,
-      authenticate: {
-        access_token: authenticate[0],
-        refresh_token: authenticate[1]
-      }
+      two_factor_enabled: user.twoFactorEnabled,
+      authenticate: user.twoFactorEnabled
+        ? {
+            temporary_2fa_token: authenticate[0]
+          }
+        : {
+            access_token: authenticate[0],
+            refresh_token: authenticate[1]
+          }
     })
   } catch {
     res.json({
@@ -209,6 +221,215 @@ export const infomationController = async (req: Request, res: Response) => {
     res.json({
       code: RESPONSE_CODE.GET_USER_INFOMATION_FAILED,
       message: USER_MESSAGE.GET_USER_INFOMATION_FAILURE
+    })
+  }
+}
+
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, any, ChangePasswordRequestBody>,
+  res: Response
+) => {
+  try {
+    // // CLOUD
+    // const ip = (req.headers['cf-connecting-ip'] || req.ip) as string
+
+    // const ipData = (await axios.get(`https://ipinfo.io/${ip}/?token=${process.env.IPINFO_TOKEN}`)).data
+    // const [latitude, longitude] = ipData.loc.split(',')
+    // const locationData = await axios.get(
+    //   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    // )
+    // const userAgent = req.useragent
+    // const deviceInfo = {
+    //   isMobile: userAgent?.isMobile,
+    //   browser: userAgent?.browser,
+    //   os: userAgent?.os
+    // }
+
+    // const content = MAIL.ChangePassword(
+    //   formatDate(),
+    //   locationData.data.display_name,
+    //   ip,
+    //   deviceInfo.browser as string,
+    //   deviceInfo.os as string
+    // )
+
+    // const user = req.user as User
+
+    // await userService.changePassword(user, req.body)
+
+    // sendMail(user.email, content.title, content.html)
+
+    // LOCAL
+    const user = req.user as User
+
+    await userService.changePassword(user, req.body)
+
+    res.json({
+      code: RESPONSE_CODE.CHANGE_PASSWORD_SUCCESSFUL,
+      message: USER_MESSAGE.CHANGE_PASSWORD_SUCCESS
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.CHANGE_PASSWORD_FAILED,
+      message: USER_MESSAGE.CHANGE_PASSWORD_FAILURE
+    })
+  }
+}
+
+export const verifyAccessController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user as User
+
+    const token = await userService.verifyAccess(user)
+
+    res.json({
+      code: RESPONSE_CODE.VERIFY_ACCESS_SUCCESSFUL,
+      message: USER_MESSAGE.VERIFY_ACCESS_SUCCESS,
+      token
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.VERIFY_ACCESS_FAILED,
+      message: USER_MESSAGE.VERIFY_ACCESS_FAILURE
+    })
+  }
+}
+
+export const setup2faController = async (req: Request, res: Response) => {
+  try {
+    const user = req.user as User
+
+    const data = await userService.setup2fa(user)
+
+    res.json({
+      code: RESPONSE_CODE.SETUP_2FA_SUCCESSFUL,
+      message: USER_MESSAGE.SETUP_2FA_SUCCESS,
+      data
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.SETUP_2FA_FAILED,
+      message: USER_MESSAGE.SETUP_2FA_FAILURE
+    })
+  }
+}
+
+export const verify2faController = async (req: Request<ParamsDictionary, any, Verify2faRequestBody>, res: Response) => {
+  try {
+    // // CLOUD
+    // const ip = (req.headers['cf-connecting-ip'] || req.ip) as string
+
+    // const ipData = (await axios.get(`https://ipinfo.io/${ip}/?token=${process.env.IPINFO_TOKEN}`)).data
+    // const [latitude, longitude] = ipData.loc.split(',')
+    // const locationData = await axios.get(
+    //   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    // )
+    // const userAgent = req.useragent
+    // const deviceInfo = {
+    //   isMobile: userAgent?.isMobile,
+    //   browser: userAgent?.browser,
+    //   os: userAgent?.os
+    // }
+
+    // const content = MAIL.Enable2FA(
+    //   formatDate(),
+    //   locationData.data.display_name,
+    //   ip,
+    //   deviceInfo.browser as string,
+    //   deviceInfo.os as string
+    // )
+
+    // const user = req.user as User
+
+    // const verified = await userService.verify2fa(user, req.body.token)
+
+    // sendMail(user.email, content.title, content.html)
+
+    // LOCAL
+    const user = req.user as User
+
+    const verified = await userService.verify2fa(user, req.body.token)
+
+    res.json({
+      code: RESPONSE_CODE.VERIFY_2FA_SUCCESSFUL,
+      message: USER_MESSAGE.VERIFY_2FA_SUCCESS,
+      verified
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.VERIFY_2FA_FAILED,
+      message: USER_MESSAGE.VERIFY_2FA_FAILURE
+    })
+  }
+}
+
+export const disable2faController = async (req: Request, res: Response) => {
+  try {
+    // // CLOUD
+    // const ip = (req.headers['cf-connecting-ip'] || req.ip) as string
+
+    // const ipData = (await axios.get(`https://ipinfo.io/${ip}/?token=${process.env.IPINFO_TOKEN}`)).data
+    // const [latitude, longitude] = ipData.loc.split(',')
+    // const locationData = await axios.get(
+    //   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    // )
+    // const userAgent = req.useragent
+    // const deviceInfo = {
+    //   isMobile: userAgent?.isMobile,
+    //   browser: userAgent?.browser,
+    //   os: userAgent?.os
+    // }
+
+    // const content = MAIL.Disable2FA(
+    //   formatDate(),
+    //   locationData.data.display_name,
+    //   ip,
+    //   deviceInfo.browser as string,
+    //   deviceInfo.os as string
+    // )
+
+    // const user = req.user as User
+
+    // await userService.disable2fa(user)
+
+    // sendMail(user.email, content.title, content.html)
+
+    // LOCAL
+    const user = req.user as User
+
+    await userService.disable2fa(user)
+
+    res.json({
+      code: RESPONSE_CODE.DISABLE_2FA_SUCCESSFUL,
+      message: USER_MESSAGE.DISABLE_2FA_SUCCESS
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.DISABLE_2FA_FAILED,
+      message: USER_MESSAGE.DISABLE_2FA_FAILURE
+    })
+  }
+}
+
+export const validate2faController = async (
+  req: Request<ParamsDictionary, any, Verify2faRequestBody>,
+  res: Response
+) => {
+  try {
+    const user = req.user as User
+
+    const verified = await userService.validate2fa(user, req.body.token)
+
+    res.json({
+      code: RESPONSE_CODE.VALIDATE_2FA_SUCCESSFUL,
+      message: USER_MESSAGE.VALIDATE_2FA_SUCCESS,
+      verified: verified.verified,
+      authenticate: verified.verified ? verified.authenticate : null
+    })
+  } catch {
+    res.json({
+      code: RESPONSE_CODE.VERIFY_2FA_FAILED,
+      message: USER_MESSAGE.VERIFY_2FA_FAILURE
     })
   }
 }
