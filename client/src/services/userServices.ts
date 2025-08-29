@@ -1,6 +1,7 @@
 import axios from "axios"
 import { UserType } from "../types/userTypes"
 import { TokenResponse } from "../types/tokenResponse"
+import { RESPONSE_CODE } from "../constants/responseCode.constants"
 
 export default class UserServices {
     private apiUrl = 'http://localhost:3000/api'
@@ -10,13 +11,22 @@ export default class UserServices {
         return response.data
     }
 
-    async getUserInfo(accessToken: string): Promise<UserType> {
+    async getUserInfo(accessToken: string, refresh_token?: string): Promise<UserType> {
+        if (refresh_token) {
+            const verify = await this.authenticAccessToken(accessToken || '', refresh_token)
+            if (
+                verify.code !== RESPONSE_CODE.TOKEN_VERIFICATION_SUCCESSFUL &&
+                verify.code !== RESPONSE_CODE.TOKEN_AUTHENTICATION_SUCCESSFUL_TOKEN_CHANGED
+            ) {
+                throw new Error('Token verification failed')
+            }
+        }
         const response = await axios.get(`${this.apiUrl}/users/infomation`, {
-                                        headers: {
-                                            'Authorization': `Bearer ${accessToken}`,
-                                            'Content-Type': 'application/json'
-                                        }
-                                    })
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
         return response.data.infomation
     }
 
@@ -25,9 +35,6 @@ export default class UserServices {
             data: {
                 refresh_token: refresh_token
             },
-            headers: {
-                'Content-Type': 'application/json'
-            }
         })
         return response.data
     }

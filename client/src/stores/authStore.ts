@@ -4,7 +4,7 @@ import UserServices from '../services/userServices';
 import { UserType } from '../types/userTypes';
 import Cookies from 'js-cookie';
 import { RESPONSE_CODE } from '../constants/responseCode.constants';
-import toast from 'react-hot-toast';
+//import toast from 'react-hot-toast';
 
 const userServices = new UserServices();
 
@@ -42,24 +42,17 @@ export const useAuthStore = create<AuthState>()(
       },
       
       logout: async () => {
-        const logouts = await userServices.logout(Cookies.get('refreshToken') || '')
-        if(logouts.code == RESPONSE_CODE.LOGOUT_SUCCESSFUL) {
-          set({ user: null, isAuthenticated: false });
-          Cookies.remove('refreshToken')
-          Cookies.remove('accessToken')
-          toast.success(`${logouts.message}!`);
-        } else {
-          toast.error(`Đăng xuất thất bại, ${logouts.message}!`);
-        }
+        set({ user: null, isAuthenticated: false });
       },
       
       checkAuth: async (accessToken: string, refresh_token: string) => {
-        const user = await userServices.getUserInfo(accessToken || '');
         const authenticate = await userServices.authenticAccessToken(accessToken || '', refresh_token)
         if(authenticate.code == RESPONSE_CODE.TOKEN_VERIFICATION_SUCCESSFUL) {
-          set({ user: user, isAuthenticated: true})
+          set({ isAuthenticated: true })
+          Cookies.set('refreshToken', authenticate.authenticate.refresh_token, { expires: 30 });
+          Cookies.set('accessToken', authenticate.authenticate.access_token, { expires: 30 });
         } else {
-          set({ user: user, isAuthenticated: false})
+          set({ isAuthenticated: false })
         }
         return get().isAuthenticated;
       }

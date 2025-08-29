@@ -64,7 +64,7 @@ function App() {
     runAuthCheck();
 
     // then every 15 minutes
-    const intervalId = setInterval(runAuthCheck, 15 * 60 * 1000);
+    const intervalId = setInterval(runAuthCheck, 1 * 60 * 1000);
     return () => clearInterval(intervalId);
   }, [checkAuth]);
   

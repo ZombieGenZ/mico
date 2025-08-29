@@ -11,19 +11,37 @@ export default class CategoriesServices {
 
     async createCategory(name: string, index: number, accessToken: string) {
         const response = await axios.post(
-            `${this.apiUrl}/categories`,
-            {
-                name: name,
-                index: index
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
+          `${this.apiUrl}/categories`,
+          {
+            name: name,
+            index: index
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
             }
-        )
-        console.log(response.data)
-        return response.data
+          }
+        );
+      
+        return response.data;
     }
+
+    async updateCategory(id: string, name: string, index: number, accessToken: string) {
+        const response = await axios.put(
+          `${this.apiUrl}/categories/${id}`,
+          {
+            name: name,
+            index: index
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        return response.data;
+    }
+    
 }
