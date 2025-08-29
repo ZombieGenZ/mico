@@ -256,7 +256,10 @@ class UserService {
 
       return {
         verified,
-        authenticate
+        authenticate: {
+          access_token: authenticate[0],
+          refresh_token: authenticate[1]
+        }
       }
     } else {
       return {
