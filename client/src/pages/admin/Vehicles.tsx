@@ -17,23 +17,30 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import VehicleServices from '../../services/vehicleServices';
-import { Vehicle } from '../../types/vehicleTypes';
+import { Vehicle, TechnicalInformationType, Features, ImageType } from '../../types/vehicleTypes';
 import VehicleFormModal from '../../components/admin/VehicleFormModal';
+import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
+import { RESPONSE_CODE } from '../../constants/responseCode.constants';
+import { useAuthStore } from '../../stores/authStore';
 
 const AdminVehicles: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   
   const { vehicles, deleteVehicle, addVehicle } = useVehicleStore();
+  const { checkAuth } = useAuthStore();
+  const vehicleService = new VehicleServices();
   
   // Load vehicles from API when component mounts
   useEffect(() => {
     const loadVehicles = async () => {
       try {
         setLoading(true);
-        const vehicleService = new VehicleServices();
         const vehiclesData = await vehicleService.getVehicles();
         // Update store with vehicles data
         vehiclesData.forEach((vehicle: Vehicle) => {
@@ -41,6 +48,7 @@ const AdminVehicles: React.FC = () => {
         });
       } catch (error) {
         console.error('Error loading vehicles:', error);
+        toast.error('Không thể tải danh sách xe');
       } finally {
         setLoading(false);
       }
@@ -68,27 +76,138 @@ const AdminVehicles: React.FC = () => {
     return brandId;
   };
   
-  const handleDelete = (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa xe này?')) {
-      deleteVehicle(id);
+  const handleDelete = async (id: string) => {
+    try {
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        return;
+      }
+
+      if (window.confirm('Bạn có chắc chắn muốn xóa xe này?')) {
+        toast.success('Đang xóa xe...');
+        
+        await vehicleService.deleteVehicle(id, Cookies.get('accessToken') || '');
+        
+        // Remove from local store
+        deleteVehicle(id);
+        toast.success('Xóa xe thành công!');
+      }
+    } catch (error) {
+      console.error('Error deleting vehicle:', error);
+      toast.error('Có lỗi xảy ra khi xóa xe, vui lòng thử lại!');
     }
   };
   
-  const handleAddVehicle = (vehicle: Vehicle) => {
-    // Thêm ID tạm thời nếu không có
-    const newVehicle: Vehicle = {
-      ...vehicle,
-      _id: vehicle._id || `temp-${Date.now()}`,
-      created_at: new Date()
-    };
-    
-    addVehicle(newVehicle);
-    
-    // Trong thực tế, bạn sẽ gọi API để lưu xe vào database
-    // const vehicleService = new VehicleServices();
-    // vehicleService.createVehicle(vehicle).then(response => {
-    //   addVehicle(response);
-    // });
+  const handleAddVehicle = async (vehicle: Vehicle) => {
+    try {
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        return;
+      }
+
+      toast.success('Đang thêm xe mới...');
+      
+      // Prepare data for API call
+      const technical_information: TechnicalInformationType[] = vehicle.technical_information || [];
+      const features: Features[] = vehicle.features || [];
+      const preview: ImageType[] = vehicle.image || [];
+      
+      const result = await vehicleService.createVehicle(
+        vehicle.title,
+        vehicle.subtitle,
+        technical_information,
+        features,
+        vehicle.category_id,
+        vehicle.brand_id,
+        vehicle.in_stock,
+        vehicle.is_new,
+        vehicle.is_used,
+        preview,
+        Cookies.get('accessToken') || ''
+      );
+
+      if (result.code === RESPONSE_CODE.CREATE_PRODUCT_SUCCESSFUL) {
+        // Add to local store with response data
+        const newVehicle: Vehicle = {
+          ...vehicle,
+          _id: result.data?._id || `temp-${Date.now()}`,
+          created_at: new Date()
+        };
+        
+        addVehicle(newVehicle);
+        setIsModalOpen(false);
+        toast.success(result.message || 'Thêm xe thành công!');
+      } else {
+        toast.error(result.message || 'Thêm xe thất bại, vui lòng thử lại!');
+      }
+    } catch (error) {
+      console.error('Error adding vehicle:', error);
+      toast.error('Có lỗi xảy ra khi thêm xe, vui lòng thử lại!');
+    }
+  };
+
+  const handleEditVehicle = async (vehicle: Vehicle) => {
+    try {
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        return;
+      }
+
+      if (!editingVehicle || !editingVehicle._id) {
+        toast.error('Không xác định được xe cần sửa.');
+        return;
+      }
+
+      toast.success('Đang cập nhật xe...');
+      
+      // Prepare data for API call
+      const technical_information: TechnicalInformationType[] = vehicle.technical_information || [];
+      const features: Features[] = vehicle.features || [];
+      const preview: ImageType[] = vehicle.image || [];
+      
+      const result = await vehicleService.updateVehicle(
+        editingVehicle._id,
+        vehicle.title,
+        vehicle.subtitle,
+        technical_information,
+        features,
+        vehicle.category_id,
+        vehicle.brand_id,
+        vehicle.in_stock,
+        vehicle.is_new,
+        vehicle.is_used,
+        preview,
+        Cookies.get('accessToken') || ''
+      );
+
+      if (result.code === RESPONSE_CODE.UPDATE_PRODUCT_SUCCESSFUL) {
+        // Update local store
+        // Note: You might need to implement updateVehicle in the store
+        toast.success(result.message || 'Cập nhật xe thành công!');
+        setShowEditModal(false);
+        setEditingVehicle(null);
+        
+        // Reload vehicles to get updated data
+        const vehiclesData = await vehicleService.getVehicles();
+        // Clear and reload store
+        vehiclesData.forEach((vehicle: Vehicle) => {
+          addVehicle(vehicle);
+        });
+      } else {
+        toast.error(result.message || 'Cập nhật xe thất bại, vui lòng thử lại!');
+      }
+    } catch (error) {
+      console.error('Error updating vehicle:', error);
+      toast.error('Có lỗi xảy ra khi cập nhật xe, vui lòng thử lại!');
+    }
+  };
+
+  const openEditModal = (vehicle: Vehicle) => {
+    setEditingVehicle(vehicle);
+    setShowEditModal(true);
   };
   
   return (
@@ -277,7 +396,12 @@ const AdminVehicles: React.FC = () => {
                         <Button variant="ghost" size="sm" icon={Eye}>
                           Xem
                         </Button>
-                        <Button variant="ghost" size="sm" icon={Edit}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          icon={Edit}
+                          onClick={() => openEditModal(vehicle)}
+                        >
                           Sửa
                         </Button>
                         <Button 
@@ -316,6 +440,20 @@ const AdminVehicles: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddVehicle}
       />
+
+      {/* Modal sửa xe */}
+      {showEditModal && editingVehicle && (
+        <VehicleFormModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingVehicle(null);
+          }}
+          onSubmit={handleEditVehicle}
+          vehicle={editingVehicle}
+          isEdit={true}
+        />
+      )}
     </div>
   );
 };

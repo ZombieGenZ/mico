@@ -1,4 +1,4 @@
-import { Vehicle } from "../types/vehicleTypes"
+import { Vehicle, TechnicalInformationType, Features, ImageType } from "../types/vehicleTypes"
 import axios from "axios"
 
 export default class VehicleServices {
@@ -9,22 +9,87 @@ export default class VehicleServices {
         return response.data.data
     }
 
-    async getVehicleById(id: string): Promise<Vehicle> {
-        const response = await axios.get(`${this.apiUrl}/vehicles/${id}`)
+    async createVehicle(
+        title: string,
+        subtitle: string,
+        technical_information: TechnicalInformationType[],
+        features: Features[],
+        category_id: string,
+        brand_id: string,
+        in_stock: boolean,
+        is_new: boolean,
+        is_used: boolean,
+        preview: ImageType[],
+        accessToken: string
+    ) {
+        const response = await axios.post(
+            `${this.apiUrl}/products`,
+            {
+                title,
+                subtitle,
+                technical_information,
+                features,
+                category_id,
+                brand_id,
+                in_stock,
+                is_new,
+                is_used,
+                preview
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
         return response.data
     }
 
-    async createVehicle(vehicle: Vehicle): Promise<Vehicle> {
-        const response = await axios.post(`${this.apiUrl}/vehicles`, vehicle)
+    async updateVehicle(
+        id: string,
+        title: string,
+        subtitle: string,
+        technical_information: TechnicalInformationType[],
+        features: Features[],
+        category_id: string,
+        brand_id: string,
+        in_stock: boolean,
+        is_new: boolean,
+        is_used: boolean,
+        preview: ImageType[],
+        accessToken: string
+    ) {
+        const response = await axios.put(
+            `${this.apiUrl}/products/${id}`,
+            {
+                title,
+                subtitle,
+                technical_information,
+                features,
+                category_id,
+                brand_id,
+                in_stock,
+                is_new,
+                is_used,
+                preview
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
         return response.data
     }
 
-    async updateVehicle(id: string, vehicle: Vehicle): Promise<Vehicle> {
-        const response = await axios.put(`${this.apiUrl}/vehicles/${id}`, vehicle)
-        return response.data
-    }
-
-    async deleteVehicle(id: string): Promise<void> {
-        await axios.delete(`${this.apiUrl}/vehicles/${id}`)
+    async deleteVehicle(id: string, accessToken: string): Promise<void> {
+        await axios.delete(`${this.apiUrl}/products/${id}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
     }
 }

@@ -43,5 +43,16 @@ export default class CategoriesServices {
         );
         return response.data;
     }
-    
+   
+    async deleteCategory(id: string, accessToken: string) {
+      const response = await axios.delete(`${this.apiUrl}/categories/${id}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      return response.data;
+    }
 }

@@ -1,3 +1,24 @@
+export interface CreateUpdateVehicle {
+    title: string,
+    subtitle: string,
+    technical_information: {
+      code: string
+      name: string
+      value: string
+      index: number
+    }[],
+    features: {
+      value: string
+      index: number
+    }[],
+    category_id: string,
+    brand_id: string,
+    in_stock: boolean,
+    is_new: boolean,
+    is_used: boolean,
+    preview: []
+}
+
 export interface Vehicle {
     _id?: string
     path: string

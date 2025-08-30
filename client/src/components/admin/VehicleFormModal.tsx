@@ -3,14 +3,17 @@ import { X, Plus, Upload } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { Vehicle, TechnicalInformationType, ImageType } from '../../types/vehicleTypes';
-import { categories } from '../../lib/mockData';
 import BrandServices from '../../services/brandsServices';
 import { BrandType } from '../../types/brandTypes';
+import CategoriesServices from '../../services/categoriesServices';
+import { CategoryType } from '../../types/categoriesTypes';
 
 interface VehicleFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (vehicle: Vehicle) => void;
+  vehicle?: Vehicle;
+  isEdit?: boolean;
 }
 
 const initialVehicle: Vehicle = {
@@ -28,10 +31,10 @@ const initialVehicle: Vehicle = {
 };
 
 const brandService = new BrandServices();
+const categoriesServices = new CategoriesServices();
 
-
-const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [vehicle, setVehicle] = useState<Vehicle>(initialVehicle);
+const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, onSubmit, vehicle: editVehicle, isEdit = false }) => {
+  const [vehicle, setVehicle] = useState<Vehicle>(editVehicle || initialVehicle);
   const [technicalInfo, setTechnicalInfo] = useState<TechnicalInformationType>({
     code: '',
     name: '',
@@ -41,13 +44,15 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
   const [feature, setFeature] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string>('');
   const [brands, setBrands] = useState<BrandType[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
         const data = await brandService.getBrands();
         setBrands(Array.isArray(data) ? data : []);
-
+        const categories = await categoriesServices.getCategories()
+        setCategories(Array.isArray(categories) ? categories : [])
       } catch (error) {
         console.error('Error fetching brands:', error);
         setBrands([]);
@@ -58,6 +63,15 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
       fetchBrands();
     }
   }, [isOpen]);
+
+  // Update vehicle state when editVehicle changes
+  useEffect(() => {
+    if (editVehicle && isEdit) {
+      setVehicle(editVehicle);
+    } else if (!isEdit) {
+      setVehicle(initialVehicle);
+    }
+  }, [editVehicle, isEdit]);
 
   if (!isOpen) return null;
 
@@ -148,7 +162,9 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Thêm xe mới</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {isEdit ? 'Sửa xe' : 'Thêm xe mới'}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -211,7 +227,7 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
               >
                 <option value="">Chọn danh mục</option>
                 {categories.map(category => (
-                  <option key={category.id} value={category.id.toString()}>
+                  <option key={category._id} value={category._id?.toString()}>
                     {category.name}
                   </option>
                 ))}
@@ -428,7 +444,7 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
               Hủy
             </Button>
             <Button type="submit" variant="primary">
-              Lưu
+              {isEdit ? 'Lưu thay đổi' : 'Thêm xe'}
             </Button>
           </div>
         </form>
