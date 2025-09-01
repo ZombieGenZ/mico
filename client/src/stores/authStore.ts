@@ -43,6 +43,8 @@ export const useAuthStore = create<AuthState>()(
       
       logout: async () => {
         set({ user: null, isAuthenticated: false });
+        Cookies.remove('refreshToken');
+        Cookies.remove('accessToken');
       },
       
       checkAuth: async (accessToken: string, refresh_token: string) => {

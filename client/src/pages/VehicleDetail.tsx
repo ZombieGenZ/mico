@@ -11,7 +11,6 @@ import {
   Calendar,
   Gauge,
   Weight,
-  Fuel,
   Settings,
   CheckCircle,
   Star
@@ -27,7 +26,7 @@ const VehicleDetail: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState('specs');
   
-  const vehicle = getVehicleById(parseInt(id || '0'));
+  const vehicle = getVehicleById(id || '0');
   
   if (!vehicle) {
     return (
@@ -70,7 +69,7 @@ const VehicleDetail: React.FC = () => {
           <span>/</span>
           <Link to={ROUTES.VEHICLES} className="hover:text-yellow-500">Xe công trình</Link>
           <span>/</span>
-          <span className="text-slate-900">{vehicle.name}</span>
+          <span className="text-slate-900">{vehicle.title}</span>
         </motion.div>
         
         {/* Back Button */}
@@ -95,17 +94,17 @@ const VehicleDetail: React.FC = () => {
                   key={selectedImage}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  src={vehicle.images[selectedImage]}
-                  alt={vehicle.name}
+                  src={vehicle.image[selectedImage].url.toString()}
+                  alt={vehicle.title}
                   className="w-full h-96 object-cover"
                 />
                 <div className="absolute top-4 left-4">
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    vehicle.condition === 'new' 
+                    vehicle.is_new
                       ? 'bg-green-500 text-white' 
                       : 'bg-yellow-400 text-slate-900'
                   }`}>
-                    {vehicle.condition === 'new' ? 'Mới' : 'Đã sử dụng'}
+                    {vehicle.is_new ? 'Mới' : 'Đã sử dụng'}
                   </span>
                 </div>
                 <div className="absolute top-4 right-4 flex space-x-2">
@@ -121,7 +120,7 @@ const VehicleDetail: React.FC = () => {
               {/* Thumbnail Gallery */}
               <div className="p-4">
                 <div className="flex space-x-2">
-                  {vehicle.images.map((image, index) => (
+                  {vehicle.image.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -132,8 +131,8 @@ const VehicleDetail: React.FC = () => {
                       }`}
                     >
                       <img
-                        src={image}
-                        alt={`${vehicle.name} ${index + 1}`}
+                        src={image.url.toString()}
+                        alt={`${vehicle.title} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -169,50 +168,29 @@ const VehicleDetail: React.FC = () => {
               {activeTab === 'specs' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Settings className="h-5 w-5 text-yellow-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Động cơ</p>
-                        <p className="font-semibold">{vehicle.specs.engine}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Gauge className="h-5 w-5 text-yellow-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Công suất</p>
-                        <p className="font-semibold">{vehicle.specs.power}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Weight className="h-5 w-5 text-yellow-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Trọng lượng</p>
-                        <p className="font-semibold">{vehicle.specs.weight}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    {vehicle.specs.bucketCapacity && (
-                      <div className="flex items-center space-x-3">
-                        <Fuel className="h-5 w-5 text-yellow-500" />
+                    {vehicle.technical_information && vehicle.technical_information.map((tech, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <Settings className="h-5 w-5 text-yellow-500" />
                         <div>
-                          <p className="text-sm text-gray-500">Dung tích gầu</p>
-                          <p className="font-semibold">{vehicle.specs.bucketCapacity}</p>
+                          <p className="text-sm text-gray-500">{tech.name}</p>
+                          <p className="font-semibold">{tech.value}</p>
                         </div>
                       </div>
-                    )}
+                    ))}
+                  </div>
+                  <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Calendar className="h-5 w-5 text-yellow-500" />
                       <div>
-                        <p className="text-sm text-gray-500">Năm sản xuất</p>
-                        <p className="font-semibold">{vehicle.year}</p>
+                        <p className="text-sm text-gray-500">Ngày tạo</p>
+                        <p className="font-semibold">{vehicle.created_at ? new Date(vehicle.created_at).toLocaleDateString('vi-VN') : 'N/A'}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <MapPin className="h-5 w-5 text-yellow-500" />
                       <div>
-                        <p className="text-sm text-gray-500">Vị trí</p>
-                        <p className="font-semibold">{vehicle.location}</p>
+                        <p className="text-sm text-gray-500">Trạng thái</p>
+                        <p className="font-semibold">{vehicle.in_stock ? 'Có sẵn' : 'Hết hàng'}</p>
                       </div>
                     </div>
                   </div>
@@ -223,19 +201,16 @@ const VehicleDetail: React.FC = () => {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-slate-900 mb-4">Tính năng nổi bật</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      'Hệ thống thủy lực tiên tiến',
-                      'Cabin cách âm, điều hòa',
-                      'Hệ thống GPS tích hợp',
-                      'Tiết kiệm nhiên liệu',
-                      'Bảo trì dễ dàng',
-                      'Độ bền cao'
-                    ].map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-3">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
+                    {vehicle.features && vehicle.features.length > 0 ? (
+                      vehicle.features.map((feature, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                          <span>{feature.value}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">Chưa có thông tin tính năng</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -298,19 +273,17 @@ const VehicleDetail: React.FC = () => {
             {/* Price & Actions */}
             <Card>
               <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">{vehicle.name}</h1>
-                <p className="text-gray-600">{vehicle.brand} • {vehicle.year}</p>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">{vehicle.title}</h1>
+                <p className="text-gray-600">{vehicle.subtitle}</p>
               </div>
               
               <div className="text-center mb-6">
                 <p className="text-3xl font-bold text-yellow-500 mb-2">
-                  {formatPrice(vehicle.price)}
+                  {vehicle.in_stock ? 'Có sẵn' : 'Hết hàng'}
                 </p>
-                {vehicle.rentPrice && (
-                  <p className="text-lg text-gray-600">
-                    Thuê: {formatPrice(vehicle.rentPrice)}/tháng
-                  </p>
-                )}
+                <p className="text-lg text-gray-600">
+                  Liên hệ để biết giá
+                </p>
               </div>
               
               <div className="space-y-3">
@@ -360,20 +333,20 @@ const VehicleDetail: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span>Tình trạng:</span>
                   <span className={`px-2 py-1 text-sm rounded-full ${
-                    vehicle.available 
+                    vehicle.in_stock 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-red-100 text-red-800'
                   }`}>
-                    {vehicle.available ? 'Có sẵn' : 'Đã bán'}
+                    {vehicle.in_stock ? 'Có sẵn' : 'Hết hàng'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Loại xe:</span>
-                  <span className="font-semibold">{vehicle.category}</span>
+                  <span className="font-semibold">{vehicle.is_new ? 'Mới' : 'Đã sử dụng'}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Thương hiệu:</span>
-                  <span className="font-semibold">{vehicle.brand}</span>
+                  <span>Danh mục:</span>
+                  <span className="font-semibold">{vehicle.category_id}</span>
                 </div>
               </div>
             </Card>

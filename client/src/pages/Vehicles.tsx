@@ -4,16 +4,13 @@ import { Search, Filter, Grid, List, Heart, Eye, ArrowRight } from 'lucide-react
 import { Link } from 'react-router-dom';
 // import { categories } from '../lib/mockData'; // replaced by API-driven categories
 import { useVehicleStore } from '../stores/vehicleStore';
-import Card from '../components/ui/Card';
+import Card from '../components/ui/Card'; 
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import VehicleServices from '../services/vehicleServices';
-import { Vehicle } from '../types/vehicleTypes';
 import BrandsServices from '../services/brandsServices';
 import CategoriesServices from '../services/categoriesServices';
 
 
-const vehicleService = new VehicleServices();
 const brandServices = new BrandsServices();
 const categoriesServices = new CategoriesServices();
 
@@ -34,6 +31,7 @@ const Vehicles: React.FC = () => {
     setSelectedBrand,
     setSortBy,
     getFilteredVehicles,
+    fetchVehicles,
   } = useVehicleStore();
   
   // Load vehicles from API when component mounts
@@ -41,11 +39,7 @@ const Vehicles: React.FC = () => {
     const loadVehicles = async () => {
       try {
         setLoading(true);
-        const vehiclesData = await vehicleService.getVehicles();
-        // Update store with vehicles data
-        vehiclesData.forEach((vehicle: Vehicle) => {
-          useVehicleStore.getState().addVehicle(vehicle);
-        });
+        await fetchVehicles();
       } catch (error) {
         console.error('Error loading vehicles:', error);
       } finally {
@@ -54,7 +48,7 @@ const Vehicles: React.FC = () => {
     };
     
     loadVehicles();
-  }, []);
+  }, [fetchVehicles]);
   
   // Load brand names when component mounts
   useEffect(() => {
