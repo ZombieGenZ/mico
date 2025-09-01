@@ -8,7 +8,7 @@ export interface ProductType {
   path: string
   title: string
   subtitle: string
-  technical_information: TechnicalInformationType[]
+  technical_informations: TechnicalInformationType[]
   features: Features[]
   image: ImageType[]
   category_id: ObjectId

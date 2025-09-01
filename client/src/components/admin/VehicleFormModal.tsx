@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Upload } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { Vehicle, TechnicalInformationType, ImageType } from '../../types/vehicleTypes';
+import { Vehicle, TechnicalInformationType, CreateUpdateVehicle } from '../../types/vehicleTypes';
 import BrandServices from '../../services/brandsServices';
 import { BrandType } from '../../types/brandTypes';
 import CategoriesServices from '../../services/categoriesServices';
@@ -11,7 +11,7 @@ import { CategoryType } from '../../types/categoriesTypes';
 interface VehicleFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (vehicle: Vehicle) => void;
+  onSubmit: (vehicle: CreateUpdateVehicle) => void;
   vehicle?: Vehicle;
   isEdit?: boolean;
 }
@@ -42,7 +42,7 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
     index: 0
   });
   const [feature, setFeature] = useState<string>('');
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [brands, setBrands] = useState<BrandType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
@@ -113,20 +113,11 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
     }
   };
 
-  const handleAddImage = () => {
-    if (imageUrl) {
-      const newImage: ImageType = {
-        name: `image-${vehicle.image.length + 1}`,
-        url: imageUrl,
-        path: imageUrl
-      };
-      
-      setVehicle(prev => ({
-        ...prev,
-        image: [...prev.image, newImage]
-      }));
-      
-      setImageUrl('');
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setSelectedFiles(prev => [...prev, ...newFiles]);
     }
   };
 
@@ -144,17 +135,30 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
     }));
   };
 
-  const handleRemoveImage = (index: number) => {
-    setVehicle(prev => ({
-      ...prev,
-      image: prev.image.filter((_, i) => i !== index)
-    }));
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(vehicle);
+    
+    // Convert Vehicle to CreateUpdateVehicle
+    const createUpdateVehicle: CreateUpdateVehicle = {
+      title: vehicle.title,
+      subtitle: vehicle.subtitle,
+      technical_informations: vehicle.technical_information,
+      features: vehicle.features,
+      category_id: vehicle.category_id,
+      brand_id: vehicle.brand_id,
+      in_stock: vehicle.in_stock,
+      is_new: vehicle.is_new,
+      is_used: vehicle.is_used,
+      preview: selectedFiles
+    };
+    
+    onSubmit(createUpdateVehicle);
     setVehicle(initialVehicle);
+    setSelectedFiles([]);
     onClose();
   };
 
@@ -331,7 +335,7 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
               Thêm thông số
             </Button>
             
-            {vehicle.technical_information.length > 0 && (
+            {vehicle.technical_information && vehicle.technical_information.length > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Thông số đã thêm:</h4>
                 <ul className="space-y-2">
@@ -400,39 +404,60 @@ const VehicleFormModal: React.FC<VehicleFormModalProps> = ({ isOpen, onClose, on
           <div className="border-t pt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Hình ảnh</h3>
             
-            <div className="flex gap-4 mb-4">
-              <Input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="Nhập URL hình ảnh"
-                className="flex-1"
+            {/* Hiển thị ảnh hiện tại khi edit */}
+            {isEdit && vehicle.image && vehicle.image.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Ảnh hiện tại:</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {vehicle.image.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img.url}
+                        alt={`Current image ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                        Ảnh hiện tại
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 mt-2">Chọn ảnh mới bên dưới để thay thế</p>
+              </div>
+            )}
+            
+            <div className="mb-4">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
               />
-              <Button
-                type="button"
-                variant="outline"
-                icon={Upload}
-                onClick={handleAddImage}
-              >
-                Thêm
-              </Button>
+              <p className="text-sm text-gray-500 mt-1">
+                {isEdit ? 'Chọn ảnh mới để thay thế (để trống nếu không muốn thay đổi)' : 'Chọn một hoặc nhiều hình ảnh'}
+              </p>
             </div>
             
-            {vehicle.image.length > 0 && (
+            {selectedFiles.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {vehicle.image.map((img, index) => (
+                {selectedFiles.map((file, index) => (
                   <div key={index} className="relative group">
                     <img
-                      src={img.url}
-                      alt={`Vehicle image ${index + 1}`}
+                      src={URL.createObjectURL(file)}
+                      alt={`Selected file ${index + 1}`}
                       className="w-full h-32 object-cover rounded-lg"
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveImage(index)}
+                      onClick={() => handleRemoveFile(index)}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="h-4 w-4" />
                     </button>
+                    <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                      {file.name}
+                    </div>
                   </div>
                 ))}
               </div>

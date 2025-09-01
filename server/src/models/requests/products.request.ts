@@ -4,7 +4,7 @@ import { TechnicalInformationType } from '~/interfaces/technicalInformation.inte
 export interface ProductRequestBody {
   title: string
   subtitle: string
-  technical_information: TechnicalInformationType[]
+  technical_informations: TechnicalInformationType[]
   features: Features[]
   category_id: string
   brand_id: string

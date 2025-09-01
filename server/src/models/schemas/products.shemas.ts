@@ -29,7 +29,7 @@ export default class Product {
     this.path = product.path
     this.title = product.title
     this.subtitle = product.subtitle
-    this.technical_information = product.technical_information
+    this.technical_information = product.technical_informations
     this.features = product.features
     this.image = product.image
     this.category_id = product.category_id

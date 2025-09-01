@@ -35,6 +35,7 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
     set({ isLoading: true });
     try {
       const vehicles = await vehicleService.getVehicles();
+      console.log(vehicles)
       set({ vehicles, isLoading: false });
     } catch (error) {
       console.error('Lỗi khi tải danh sách xe:', error);

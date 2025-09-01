@@ -12,17 +12,18 @@ import {
   DollarSign
 } from 'lucide-react';
 import { useVehicleStore } from '../../stores/vehicleStore';
-import { categories } from '../../lib/mockData';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import VehicleServices from '../../services/vehicleServices';
-import { Vehicle, TechnicalInformationType, Features, ImageType } from '../../types/vehicleTypes';
+import { Vehicle, TechnicalInformationType, Features, CreateUpdateVehicle } from '../../types/vehicleTypes';
 import VehicleFormModal from '../../components/admin/VehicleFormModal';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { RESPONSE_CODE } from '../../constants/responseCode.constants';
 import { useAuthStore } from '../../stores/authStore';
+import CategoriesServices from '../../services/categoriesServices';
+import { CategoryType } from '../../types/categoriesTypes';
 
 const AdminVehicles: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,31 +32,36 @@ const AdminVehicles: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   
-  const { vehicles, deleteVehicle, addVehicle } = useVehicleStore();
+  const { vehicles, deleteVehicle, fetchVehicles, addVehicle } = useVehicleStore();
   const { checkAuth } = useAuthStore();
   const vehicleService = new VehicleServices();
+  const categoriesService = new CategoriesServices();
   
-  // Load vehicles from API when component mounts
+  // Load vehicles and categories from API when component mounts
   useEffect(() => {
-    const loadVehicles = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const vehiclesData = await vehicleService.getVehicles();
-        // Update store with vehicles data
-        vehiclesData.forEach((vehicle: Vehicle) => {
-          addVehicle(vehicle);
-        });
+        
+        // Load vehicles using store method (this will replace existing vehicles)
+        await fetchVehicles();
+        
+        // Load categories
+        const categoriesData = await categoriesService.getCategories();
+        setCategories(categoriesData);
+        
       } catch (error) {
-        console.error('Error loading vehicles:', error);
-        toast.error('Không thể tải danh sách xe');
+        console.error('Error loading data:', error);
+        toast.error('Không thể tải dữ liệu');
       } finally {
         setLoading(false);
       }
     };
     
-    loadVehicles();
-  }, [addVehicle]);
+    loadData();
+  }, [fetchVehicles]);
   
   const filteredVehicles = vehicles.filter(vehicle => {
     const matchesSearch = vehicle.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -66,7 +72,7 @@ const AdminVehicles: React.FC = () => {
   
   // Helper function to get category name by ID
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id.toString() === categoryId);
+    const category = categories.find((cat: CategoryType) => cat._id === categoryId);
     return category?.name || categoryId;
   };
   
@@ -84,22 +90,49 @@ const AdminVehicles: React.FC = () => {
         return;
       }
 
-      if (window.confirm('Bạn có chắc chắn muốn xóa xe này?')) {
-        toast.success('Đang xóa xe...');
-        
-        await vehicleService.deleteVehicle(id, Cookies.get('accessToken') || '');
-        
-        // Remove from local store
-        deleteVehicle(id);
-        toast.success('Xóa xe thành công!');
-      }
+      // Show confirmation toast with action buttons
+      toast((t) => (
+        <div className="flex flex-col gap-2">
+          <span>Bạn có chắc chắn muốn xóa xe này?</span>
+          <div className="flex gap-2">
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  toast.loading('Đang xóa xe...');
+                  await vehicleService.deleteVehicle(id, Cookies.get('accessToken') || '');
+                  deleteVehicle(id);
+                  toast.dismiss();
+                  toast.success('Xóa xe thành công!');
+                } catch (error) {
+                  toast.dismiss();
+                  console.error('Error deleting vehicle:', error);
+                  toast.error('Có lỗi xảy ra khi xóa xe, vui lòng thử lại!');
+                }
+              }}
+              className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+            >
+              Xóa
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      ), {
+        duration: 10000,
+        position: 'top-center'
+      });
     } catch (error) {
-      console.error('Error deleting vehicle:', error);
-      toast.error('Có lỗi xảy ra khi xóa xe, vui lòng thử lại!');
+      console.error('Error in handleDelete:', error);
+      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
   
-  const handleAddVehicle = async (vehicle: Vehicle) => {
+  const handleAddVehicle = async (vehicle: CreateUpdateVehicle) => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
@@ -110,14 +143,16 @@ const AdminVehicles: React.FC = () => {
       toast.success('Đang thêm xe mới...');
       
       // Prepare data for API call
-      const technical_information: TechnicalInformationType[] = vehicle.technical_information || [];
+      const technical_informations: TechnicalInformationType[] = vehicle.technical_informations || [];
       const features: Features[] = vehicle.features || [];
-      const preview: ImageType[] = vehicle.image || [];
+      const preview: File[] = Array.isArray(vehicle.preview) && vehicle.preview.length > 0 && vehicle.preview[0] instanceof File 
+        ? vehicle.preview as File[] 
+        : [];
       
       const result = await vehicleService.createVehicle(
         vehicle.title,
         vehicle.subtitle,
-        technical_information,
+        technical_informations,
         features,
         vehicle.category_id,
         vehicle.brand_id,
@@ -129,14 +164,8 @@ const AdminVehicles: React.FC = () => {
       );
 
       if (result.code === RESPONSE_CODE.CREATE_PRODUCT_SUCCESSFUL) {
-        // Add to local store with response data
-        const newVehicle: Vehicle = {
-          ...vehicle,
-          _id: result.data?._id || `temp-${Date.now()}`,
-          created_at: new Date()
-        };
-        
-        addVehicle(newVehicle);
+        // Reload vehicles from server to get updated data
+        await fetchVehicles();
         setIsModalOpen(false);
         toast.success(result.message || 'Thêm xe thành công!');
       } else {
@@ -148,7 +177,7 @@ const AdminVehicles: React.FC = () => {
     }
   };
 
-  const handleEditVehicle = async (vehicle: Vehicle) => {
+  const handleEditVehicle = async (vehicle: CreateUpdateVehicle) => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
@@ -164,9 +193,11 @@ const AdminVehicles: React.FC = () => {
       toast.success('Đang cập nhật xe...');
       
       // Prepare data for API call
-      const technical_information: TechnicalInformationType[] = vehicle.technical_information || [];
+      const technical_information: TechnicalInformationType[] = vehicle.technical_informations || [];
       const features: Features[] = vehicle.features || [];
-      const preview: ImageType[] = vehicle.image || [];
+      const preview: File[] = Array.isArray(vehicle.preview) && vehicle.preview.length > 0 && vehicle.preview[0] instanceof File 
+        ? vehicle.preview as File[] 
+        : [];
       
       const result = await vehicleService.updateVehicle(
         editingVehicle._id,
@@ -179,8 +210,8 @@ const AdminVehicles: React.FC = () => {
         vehicle.in_stock,
         vehicle.is_new,
         vehicle.is_used,
-        preview,
-        Cookies.get('accessToken') || ''
+        Cookies.get('accessToken') || '',
+        preview.length > 0 ? preview : undefined
       );
 
       if (result.code === RESPONSE_CODE.UPDATE_PRODUCT_SUCCESSFUL) {
@@ -189,13 +220,7 @@ const AdminVehicles: React.FC = () => {
         toast.success(result.message || 'Cập nhật xe thành công!');
         setShowEditModal(false);
         setEditingVehicle(null);
-        
-        // Reload vehicles to get updated data
-        const vehiclesData = await vehicleService.getVehicles();
-        // Clear and reload store
-        vehiclesData.forEach((vehicle: Vehicle) => {
-          addVehicle(vehicle);
-        });
+        await fetchVehicles();
       } else {
         toast.error(result.message || 'Cập nhật xe thất bại, vui lòng thử lại!');
       }
@@ -340,7 +365,7 @@ const AdminVehicles: React.FC = () => {
               <tbody>
                 {filteredVehicles.map((vehicle, index) => (
                   <motion.tr
-                    key={vehicle._id}
+                    key={index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}

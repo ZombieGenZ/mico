@@ -1,7 +1,7 @@
 export interface CreateUpdateVehicle {
     title: string,
     subtitle: string,
-    technical_information: {
+    technical_informations: {
       code: string
       name: string
       value: string
@@ -16,7 +16,7 @@ export interface CreateUpdateVehicle {
     in_stock: boolean,
     is_new: boolean,
     is_used: boolean,
-    preview: []
+    preview: ImageType[] | File[]
 }
 
 export interface Vehicle {
