@@ -14,7 +14,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import CategoriesServices from '../../services/categoriesServices';
-import toast from 'react-hot-toast';
+import { useToast } from '../../contexts/ToastContext';
 import Cookies from 'js-cookie';
 import { RESPONSE_CODE } from '../../constants/responseCode.constants';
 import { useAuthStore } from '../../stores/authStore';
@@ -27,6 +27,7 @@ interface createForm {
 }
 
 const AdminCategories: React.FC = () => {
+  const { showSuccess, showError } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -43,7 +44,7 @@ const AdminCategories: React.FC = () => {
         setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error loading categories:', error);
-        toast.error('Không thể tải danh sách danh mục');
+        showError('Lỗi tải dữ liệu', 'Không thể tải danh sách danh mục');
       } finally {
         setLoading(false);
       }
@@ -74,21 +75,21 @@ const AdminCategories: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
       
       // TODO: Implement deleteCategory service method
       const result = await categoriesServices.deleteCategory(id, Cookies.get('accessToken') || '');
       if (result.code == RESPONSE_CODE.DELETE_CATEGORY_SUCCESSFUL) {
-        toast.success(result.message);
+        showSuccess('Thành công!', result.message);
         const latest = await categoriesServices.getCategories();
         setCategories(Array.isArray(latest) ? latest : []);
       } else {
-        toast.error('Xóa danh mục thất bại, vui lòng thử lại!');
+        showError('Lỗi xóa danh mục', 'Xóa danh mục thất bại, vui lòng thử lại!');
       }
     } catch {
-      toast.error('Có lỗi xảy ra khi xóa danh mục, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra khi xóa danh mục, vui lòng thử lại!');
     }
   };
 
@@ -96,21 +97,21 @@ const AdminCategories: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
       const success = await categoriesServices.createCategory(category.name, category.index, Cookies.get('accessToken') || '');
       if (success.code == RESPONSE_CODE.CREATE_CATEGORY_SUCCESSFUL) {
-        toast.success(success.message);
+        showSuccess('Thành công!', success.message);
         const latest = await categoriesServices.getCategories();
         setCategories(Array.isArray(latest) ? latest : []);
         setShowAddModal(false);
         reset();
       } else {
-        toast.error('Thêm danh mục thất bại, vui lòng thử lại!');
+        showError('Lỗi thêm danh mục', 'Thêm danh mục thất bại, vui lòng thử lại!');
       }
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
 
@@ -118,11 +119,11 @@ const AdminCategories: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
       if (!editingCategory || !editingCategory._id) {
-        toast.error('Không xác định được danh mục cần sửa.');
+        showError('Lỗi', 'Không xác định được danh mục cần sửa.');
         return;
       }
       const result = await categoriesServices.updateCategory(
@@ -132,17 +133,17 @@ const AdminCategories: React.FC = () => {
         Cookies.get('accessToken') || ''
       );
       if (result.code == RESPONSE_CODE.UPDATE_CATEGORY_SUCCESSFUL) {
-        toast.success(result.message);
+        showSuccess('Thành công!', result.message);
         const latest = await categoriesServices.getCategories();
         setCategories(Array.isArray(latest) ? latest : []);
         setShowEditModal(false);
         setEditingCategory(null);
         resetEdit();
       } else {
-        toast.error('Cập nhật danh mục thất bại, vui lòng thử lại!');
+        showError('Lỗi cập nhật danh mục', 'Cập nhật danh mục thất bại, vui lòng thử lại!');
       }
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   }
   

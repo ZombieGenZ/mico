@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { 
@@ -11,7 +11,7 @@ import {
   User,
   Building
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useToast } from '../contexts/ToastContext';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -26,21 +26,23 @@ interface ContactForm {
 }
 
 const Contact: React.FC = () => {
+  const { showSuccess, showError } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ContactForm>();
   
   const onSubmit = async (data: ContactForm) => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Tin nhắn đã được gửi thành công!');
+      showSuccess('Thành công!', 'Tin nhắn đã được gửi thành công!');
       reset();
     } catch (error) {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
   

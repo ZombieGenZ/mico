@@ -12,28 +12,31 @@ import {
   TrendingUp,
   Star
 } from 'lucide-react';
-import { newsItems } from '../../lib/mockData';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { PostType } from '../../types/postTypes';
 import { TopicType } from '../../types/topicType';
-import PostServices, { CreatePostData } from '../../services/postsServices';
+import PostServices, { CreateUpdatePostData } from '../../services/postsServices';
 import PostFormModal from '../../components/modals/PostFormModal';
 import TopicsServices from '../../services/topicsServices';
+import { useToast } from '../../contexts/ToastContext';
+import { useAuthStore } from '../../stores/authStore';
+import Cookies from 'js-cookie';
 
 const postServices = new PostServices()
 const topicsService = new TopicsServices()
 
 const AdminNews: React.FC = () => {
+  const { showSuccess, showError } = useToast();
+  const { checkAuth } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [posts, setPosts] = useState<PostType[]>([]);
   const [topics, setTopics] = useState<TopicType[]>([]);
   const [loading, setLoading] = useState(false);
-  
-  const categories = ['Tin tức ngành', 'Review sản phẩm', 'Hướng dẫn', 'Khuyến mãi'];
+  const [selectedPost, setSelectedPost] = useState<PostType | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +60,7 @@ const AdminNews: React.FC = () => {
   }, [])
 
   const filteredNews = posts.filter(item => {
+    if (!item || !item.title || !item.content) return false;
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.content.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || item.topic_id === selectedCategory;
@@ -71,20 +75,73 @@ const AdminNews: React.FC = () => {
     });
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
-      console.log('Delete news:', id);
+  const handleDelete = async (id: string) => {
+    try {
+      // Check authentication first
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        return;
+      }
+  
+      // Show confirmation dialog
+      if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+        setLoading(true);
+        await postServices.deletePost(id);
+        
+        // Remove post from local state
+        setPosts(prev => prev.filter(post => post._id !== id));
+        
+        showSuccess('Thành công!', 'Bài viết đã được xóa thành công');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      showError('Lỗi xóa bài viết', 'Có lỗi xảy ra khi xóa bài viết. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCreatePost = async (postData: CreatePostData) => {
+  const handleCreatePost = async (postData: CreateUpdatePostData) => {
     try {
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        return;
+      }
+      
       setLoading(true);
       const newPost = await postServices.createPost(postData);
       setPosts(prev => [newPost, ...prev]);
       console.log('Post created successfully:', newPost);
     } catch (error) {
       console.error('Error creating post:', error);
+      throw error; // Re-throw to let modal handle the error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (post: PostType) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleUpdatePost = async (postData: CreateUpdatePostData) => {
+    try {
+      const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
+      if (!isAuthenticated) {
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        return;
+      }
+      
+      setLoading(true);
+      const updatedPost = await postServices.updatePost(postData);
+      setPosts(prev => prev.map(p => p._id === updatedPost._id ? updatedPost : p));
+      console.log('Post updated successfully:', updatedPost);
+      setSelectedPost(undefined);
+    } catch (error) {
+      console.error('Error updating post:', error);
       throw error; // Re-throw to let modal handle the error
     } finally {
       setLoading(false);
@@ -151,7 +208,7 @@ const AdminNews: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Bài nổi bật</p>
               <p className="text-2xl font-bold text-gray-900">
-                {posts.filter(item => item.is_featured).length}
+                {posts.filter(item => item && item.is_featured).length}
               </p>
             </div>
             <div className="p-3 bg-yellow-100 rounded-full">
@@ -190,24 +247,24 @@ const AdminNews: React.FC = () => {
         <div className="space-y-4">
           {filteredNews.map((item, index) => (
             <motion.div
-              key={item._id}
+              key={item?._id || index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <img
-                src={item.thumbnail?.url || '/placeholder-image.jpg'}
-                alt={item.title}
+                src={item?.thumbnail?.url || '/placeholder-image.jpg'}
+                alt={item?.title || 'Không có tiêu đề'}
                 className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
               />
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
-                    {topics.find(topic => topic._id === item.topic_id)?.name || 'Chưa phân loại'}
+                    {topics.find(topic => topic._id === item?.topic_id)?.name || 'Chưa phân loại'}
                   </span>
-                  {item.is_featured && (
+                  {item?.is_featured && (
                     <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
                       Nổi bật
                     </span>
@@ -215,21 +272,21 @@ const AdminNews: React.FC = () => {
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
-                  {item.title}
+                  {item?.title || 'Không có tiêu đề'}
                 </h3>
 
                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                  {item.sub_title}
+                  {item?.sub_title || 'Không có mô tả'}
                 </p>
 
                 <div className="flex items-center space-x-4 text-xs text-gray-500">
                   <div className="flex items-center space-x-1">
                     <User className="h-3 w-3" />
-                    <span>{item.user_id || 'Admin'}</span>
+                    <span>{item?.user_id || 'Admin'}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-3 w-3" />
-                    <span>{formatDate(item.created_at?.toString() || '')}</span>
+                    <span>{formatDate(item?.created_at?.toString() || '')}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Eye className="h-3 w-3" />
@@ -242,14 +299,16 @@ const AdminNews: React.FC = () => {
                 <Button variant="ghost" size="sm" icon={Eye}>
                   Xem
                 </Button>
-                <Button variant="ghost" size="sm" icon={Edit}>
+                <Button variant="ghost" size="sm" icon={Edit}
+                  onClick={() => handleEdit(item)}
+                >
                   Sửa
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   icon={Trash2}
-                  onClick={() => handleDelete(item._id || '')}
+                  onClick={() => handleDelete(item?._id || '')}
                 >
                   Xóa
                 </Button>
@@ -274,9 +333,14 @@ const AdminNews: React.FC = () => {
       {/* Post Form Modal */}
       <PostFormModal
         isOpen={isModalOpen}
-        onClose={closeModal}
-        onSubmit={handleCreatePost}
+        onClose={() => {
+          closeModal();
+          setSelectedPost(undefined);
+        }}
+        onSubmit={selectedPost ? handleUpdatePost : handleCreatePost}
         topics={topics}
+        initialData={selectedPost}
+        isEdit={!!selectedPost}
       />
     </div>
   );

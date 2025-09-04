@@ -18,7 +18,7 @@ import Input from '../../components/ui/Input';
 import VehicleServices from '../../services/vehicleServices';
 import { Vehicle, TechnicalInformationType, Features, CreateUpdateVehicle } from '../../types/vehicleTypes';
 import VehicleFormModal from '../../components/admin/VehicleFormModal';
-import toast from 'react-hot-toast';
+import { useToast } from '../../contexts/ToastContext';
 import Cookies from 'js-cookie';
 import { RESPONSE_CODE } from '../../constants/responseCode.constants';
 import { useAuthStore } from '../../stores/authStore';
@@ -26,16 +26,16 @@ import CategoriesServices from '../../services/categoriesServices';
 import { CategoryType } from '../../types/categoriesTypes';
 
 const AdminVehicles: React.FC = () => {
+  const { showSuccess, showError } = useToast();
+  const { vehicles, deleteVehicle, fetchVehicles } = useVehicleStore();
+  const { checkAuth } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<CategoryType[]>([]);
-  
-  const { vehicles, deleteVehicle, fetchVehicles, addVehicle } = useVehicleStore();
-  const { checkAuth } = useAuthStore();
   const vehicleService = new VehicleServices();
   const categoriesService = new CategoriesServices();
   
@@ -54,7 +54,7 @@ const AdminVehicles: React.FC = () => {
         
       } catch (error) {
         console.error('Error loading data:', error);
-        toast.error('Không thể tải dữ liệu');
+        showError('Lỗi tải dữ liệu', 'Không thể tải dữ liệu');
       } finally {
         setLoading(false);
       }
@@ -86,49 +86,27 @@ const AdminVehicles: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
 
-      // Show confirmation toast with action buttons
-      toast((t) => (
-        <div className="flex flex-col gap-2">
-          <span>Bạn có chắc chắn muốn xóa xe này?</span>
-          <div className="flex gap-2">
-            <button
-              onClick={async () => {
-                toast.dismiss(t.id);
-                try {
-                  toast.loading('Đang xóa xe...');
-                  await vehicleService.deleteVehicle(id, Cookies.get('accessToken') || '');
-                  deleteVehicle(id);
-                  toast.dismiss();
-                  toast.success('Xóa xe thành công!');
-                } catch (error) {
-                  toast.dismiss();
-                  console.error('Error deleting vehicle:', error);
-                  toast.error('Có lỗi xảy ra khi xóa xe, vui lòng thử lại!');
-                }
-              }}
-              className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-            >
-              Xóa
-            </button>
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
-            >
-              Hủy
-            </button>
-          </div>
-        </div>
-      ), {
-        duration: 10000,
-        position: 'top-center'
-      });
+      // Show confirmation dialog
+      if (window.confirm('Bạn có chắc chắn muốn xóa xe này?')) {
+        try {
+          setLoading(true);
+          await vehicleService.deleteVehicle(id, Cookies.get('accessToken') || '');
+          deleteVehicle(id);
+          showSuccess('Thành công!', 'Xóa xe thành công!');
+        } catch (error) {
+          console.error('Error deleting vehicle:', error);
+          showError('Lỗi xóa xe', 'Có lỗi xảy ra khi xóa xe, vui lòng thử lại!');
+        } finally {
+          setLoading(false);
+        }
+      }
     } catch (error) {
       console.error('Error in handleDelete:', error);
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
   
@@ -136,11 +114,11 @@ const AdminVehicles: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
 
-      toast.success('Đang thêm xe mới...');
+      // No need for loading toast, using loading state
       
       // Prepare data for API call
       const technical_informations: TechnicalInformationType[] = vehicle.technical_informations || [];
@@ -167,13 +145,13 @@ const AdminVehicles: React.FC = () => {
         // Reload vehicles from server to get updated data
         await fetchVehicles();
         setIsModalOpen(false);
-        toast.success(result.message || 'Thêm xe thành công!');
+        showSuccess('Thành công!', result.message || 'Thêm xe thành công!');
       } else {
-        toast.error(result.message || 'Thêm xe thất bại, vui lòng thử lại!');
+        showError('Lỗi thêm xe', result.message || 'Thêm xe thất bại, vui lòng thử lại!');
       }
     } catch (error) {
       console.error('Error adding vehicle:', error);
-      toast.error('Có lỗi xảy ra khi thêm xe, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra khi thêm xe, vui lòng thử lại!');
     }
   };
 
@@ -181,16 +159,16 @@ const AdminVehicles: React.FC = () => {
     try {
       const isAuthenticated = await checkAuth(Cookies.get('accessToken') || '', Cookies.get('refreshToken') || '');
       if (!isAuthenticated) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!');
+        showError('Lỗi xác thực', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         return;
       }
 
       if (!editingVehicle || !editingVehicle._id) {
-        toast.error('Không xác định được xe cần sửa.');
+        showError('Lỗi', 'Không xác định được xe cần sửa.');
         return;
       }
 
-      toast.success('Đang cập nhật xe...');
+      // No need for loading toast, using loading state
       
       // Prepare data for API call
       const technical_information: TechnicalInformationType[] = vehicle.technical_informations || [];
@@ -217,16 +195,16 @@ const AdminVehicles: React.FC = () => {
       if (result.code === RESPONSE_CODE.UPDATE_PRODUCT_SUCCESSFUL) {
         // Update local store
         // Note: You might need to implement updateVehicle in the store
-        toast.success(result.message || 'Cập nhật xe thành công!');
+        showSuccess('Thành công!', result.message || 'Cập nhật xe thành công!');
         setShowEditModal(false);
         setEditingVehicle(null);
         await fetchVehicles();
       } else {
-        toast.error(result.message || 'Cập nhật xe thất bại, vui lòng thử lại!');
+        showError('Lỗi cập nhật', result.message || 'Cập nhật xe thất bại, vui lòng thử lại!');
       }
     } catch (error) {
       console.error('Error updating vehicle:', error);
-      toast.error('Có lỗi xảy ra khi cập nhật xe, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra khi cập nhật xe, vui lòng thử lại!');
     }
   };
 

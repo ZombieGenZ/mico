@@ -4,23 +4,28 @@ import { X, Upload, Image as ImageIcon, Star } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Card from '../ui/Card';
-import { CreatePostData } from '../../services/postsServices';
+import { CreateUpdatePostData } from '../../services/postsServices';
 import { TopicType } from '../../types/topicType';
 import { useToast } from '../../contexts/ToastContext';
 import Cookies from 'js-cookie';
+import { PostType } from '../../types/postTypes';
 
 interface PostFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (postData: CreatePostData) => Promise<void>;
+  onSubmit: (postData: CreateUpdatePostData) => Promise<void>;
   topics: TopicType[];
+  initialData?: PostType;
+  isEdit?: boolean;
 }
 
 const PostFormModal: React.FC<PostFormModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  topics
+  topics,
+  initialData,
+  isEdit
 }) => {
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
@@ -35,9 +40,24 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Reset form when modal opens/closes
+  // Reset form when modal opens/closes or populate with initialData
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen && initialData) {
+      // Populate form with existing data when editing
+      setFormData({
+        title: initialData.title || '',
+        sub_title: initialData.sub_title || '',
+        content: initialData.content || '',
+        topic_id: initialData.topic_id || '',
+        is_featured: initialData.is_featured || false
+      });
+      // Set existing thumbnail preview if available
+      if (initialData.thumbnail?.url) {
+        setPreviewUrl(initialData.thumbnail.url);
+      }
+      setErrors({});
+    } else if (!isOpen) {
+      // Reset form when modal closes
       setFormData({
         title: '',
         sub_title: '',
@@ -49,7 +69,7 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
       setPreviewUrl('');
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +120,7 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
     if (!formData.topic_id) {
       newErrors.topic_id = 'Chủ đề là bắt buộc';
     }
-    if (!selectedFile) {
+    if (!selectedFile && !previewUrl) {
       newErrors.thumbnail = 'Ảnh thumbnail là bắt buộc';
     }
 
@@ -119,18 +139,23 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      const postData: CreatePostData = {
+      const postData: CreateUpdatePostData = {
+        _id: initialData?._id,
         ...formData,
         thumbnail: selectedFile!,
         token: Cookies.get('accessToken')!
       };
       
       await onSubmit(postData);
-      showSuccess('Thành công!', 'Bài viết đã được tạo thành công');
+      showSuccess('Thành công!', isEdit ? 'Bài viết đã được cập nhật thành công' : 'Bài viết đã được tạo thành công');
       onClose();
     } catch (error) {
-      console.error('Error creating post:', error);
-      showError('Lỗi tạo bài viết', 'Có lỗi xảy ra khi tạo bài viết. Vui lòng thử lại.');
+      console.error('Error submitting post:', error);
+      console.log(Cookies.get('accessToken'))
+      showError(
+        isEdit ? 'Lỗi cập nhật bài viết' : 'Lỗi tạo bài viết', 
+        isEdit ? 'Có lỗi xảy ra khi cập nhật bài viết. Vui lòng thử lại.' : 'Có lỗi xảy ra khi tạo bài viết. Vui lòng thử lại.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -158,7 +183,9 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
             className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Thêm bài viết mới</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {isEdit ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}
+              </h2>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -247,7 +274,7 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
                   Ảnh thumbnail *
                 </label>
                 
-                {!selectedFile ? (
+                {!selectedFile && !previewUrl ? (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                     <div className="text-center">
                       <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
@@ -291,10 +318,10 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
                       />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">
-                          {selectedFile.name}
+                          {selectedFile?.name}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          {selectedFile ? (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB' : 'Ảnh hiện tại'}
                         </p>
                       </div>
                       <Button
@@ -346,7 +373,7 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
                   disabled={isSubmitting}
                   loading={isSubmitting}
                 >
-                  {isSubmitting ? 'Đang tạo...' : 'Tạo bài viết'}
+                  {isSubmitting ? (isEdit ? 'Đang cập nhật...' : 'Đang tạo...') : (isEdit ? 'Cập nhật bài viết' : 'Tạo bài viết')}
                 </Button>
               </div>
             </form>

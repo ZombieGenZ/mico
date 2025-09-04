@@ -13,7 +13,7 @@ import {
   Send,
   CheckCircle
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useToast } from '../contexts/ToastContext';
 import { vehicles, categories } from '../lib/mockData';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -31,7 +31,9 @@ interface QuoteForm {
 }
 
 const Quote: React.FC = () => {
+  const { showSuccess, showError } = useToast();
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
   
   const {
@@ -39,7 +41,7 @@ const Quote: React.FC = () => {
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<QuoteForm>();
   
   const serviceType = watch('serviceType');
@@ -56,11 +58,11 @@ const Quote: React.FC = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Yêu cầu báo giá đã được gửi thành công!');
+      showSuccess('Thành công!', 'Yêu cầu báo giá đã được gửi thành công!');
       setStep(4); // Success step
       reset();
     } catch (error) {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
   

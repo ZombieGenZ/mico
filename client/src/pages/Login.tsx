@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useToast } from '../contexts/ToastContext';
 import { useAuthStore } from '../stores/authStore';
 import { ROUTES, DEMO_CREDENTIALS } from '../lib/constants';
 import Card from '../components/ui/Card';
@@ -16,9 +16,9 @@ interface LoginForm {
 }
 
 const Login: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
   const { login } = useAuthStore();
+  const navigate = useNavigate();
   
   const {
     register,
@@ -30,15 +30,17 @@ const Login: React.FC = () => {
     try {
       const success = await login(data.email, data.password);
       if (success) {
-        toast.success('Đăng nhập thành công!');
+        showSuccess('Thành công!', 'Đăng nhập thành công!');
         navigate(ROUTES.ADMIN_DASHBOARD);
       } else {
-        toast.error('Email hoặc mật khẩu không chính xác. Vui lòng thử lại sau!');
+        showError('Lỗi đăng nhập', 'Email hoặc mật khẩu không chính xác. Vui lòng thử lại sau!');
       }
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      showError('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
+  
+  const [showPassword, setShowPassword] = useState(false);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 flex items-center justify-center px-4">
