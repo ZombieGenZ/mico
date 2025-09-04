@@ -120,7 +120,7 @@ export const postValidator = async (req: Request, res: Response, next: NextFunct
           errorMessage: POST_MESSAGE.TITLE_LENGTH_MUST_BE_FROM_1_TO_150
         }
       },
-      subtitle: {
+      sub_title: {
         notEmpty: {
           errorMessage: POST_MESSAGE.SUBTITLE_IS_REQUIRED
         },

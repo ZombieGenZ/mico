@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import LottieLoader from './components/loading/LottieLoader';
 import Cookies from 'js-cookie';
 import { useAuthStore } from './stores/authStore';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -73,180 +73,165 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#1E293B',
-              color: '#fff',
-            },
-            success: {
-              iconTheme: {
-                primary: '#FFD60A',
-                secondary: '#1E293B',
-              },
-            },
-          }}
-        />
-        
-        <Routes>
-          {/* Public Routes */}
-          <Route
-            path={ROUTES.HOME}
-            element={
-              <Layout>
-                <Home />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.VEHICLES}
-            element={
-              <Layout>
-                <Vehicles />
-              </Layout>
-            }
-          />
-          <Route
-            path="/vehicles/:id"
-            element={
-              <Layout>
-                <VehicleDetail />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.SERVICES}
-            element={
-              <Layout>
-                <Services />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.NEWS}
-            element={
-              <Layout>
-                <News />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.ABOUT}
-            element={
-              <Layout>
-                <About />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.CONTACT}
-            element={
-              <Layout>
-                <Contact />
-              </Layout>
-            }
-          />
-          <Route
-            path={ROUTES.QUOTE}
-            element={
-              <Layout>
-                <Quote />
-              </Layout>
-            }
-          />
+    <ToastProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
           
-          {/* Auth Routes */}
-          <Route path={ROUTES.LOGIN} element={<Login />} />
-          
-          {/* Protected Admin Routes */}
-          <Route
-            path={ROUTES.ADMIN_DASHBOARD}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <Dashboard />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_VEHICLES}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminVehicles />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_CATEGORIES}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminCategories />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_NEWS}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminNews />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_QUOTES}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminQuotes />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_SETTINGS}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminSettings />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_CUSTOMERS}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminCustomers />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={ROUTES.ADMIN_REPORTS}
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <AdminReports />
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-          {/* Placeholder routes for development */}
-        </Routes>
-      </div>
-    </Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route
+              path={ROUTES.HOME}
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.VEHICLES}
+              element={
+                <Layout>
+                  <Vehicles />
+                </Layout>
+              }
+            />
+            <Route
+              path="/vehicles/:id"
+              element={
+                <Layout>
+                  <VehicleDetail />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.SERVICES}
+              element={
+                <Layout>
+                  <Services />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.NEWS}
+              element={
+                <Layout>
+                  <News />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.ABOUT}
+              element={
+                <Layout>
+                  <About />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.CONTACT}
+              element={
+                <Layout>
+                  <Contact />
+                </Layout>
+              }
+            />
+            <Route
+              path={ROUTES.QUOTE}
+              element={
+                <Layout>
+                  <Quote />
+                </Layout>
+              }
+            />
+            
+            {/* Auth Routes */}
+            <Route path={ROUTES.LOGIN} element={<Login />} />
+            
+            {/* Protected Admin Routes */}
+            <Route
+              path={ROUTES.ADMIN_DASHBOARD}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <Dashboard />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_VEHICLES}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminVehicles />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_CATEGORIES}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminCategories />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_NEWS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminNews />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_QUOTES}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminQuotes />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_SETTINGS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminSettings />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_CUSTOMERS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminCustomers />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_REPORTS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminReports />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 

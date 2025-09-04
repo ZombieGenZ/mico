@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Plus, 
@@ -16,20 +16,53 @@ import { newsItems } from '../../lib/mockData';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import { PostType } from '../../types/postTypes';
+import { TopicType } from '../../types/topicType';
+import PostServices, { CreatePostData } from '../../services/postsServices';
+import PostFormModal from '../../components/modals/PostFormModal';
+import TopicsServices from '../../services/topicsServices';
+
+const postServices = new PostServices()
+const topicsService = new TopicsServices()
 
 const AdminNews: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const [topics, setTopics] = useState<TopicType[]>([]);
+  const [loading, setLoading] = useState(false);
   
   const categories = ['Tin tức ngành', 'Review sản phẩm', 'Hướng dẫn', 'Khuyến mãi'];
-  
-  const filteredNews = newsItems.filter(item => {
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [postsResponse, topicsResponse] = await Promise.all([
+          postServices.getPosts(),
+          topicsService.getTopics()
+        ]);
+        setPosts(postsResponse);
+        setTopics(topicsResponse);
+        console.log('Posts:', postsResponse);
+        console.log('Topics:', topicsResponse);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [])
+
+  const filteredNews = posts.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || item.category === selectedCategory;
+    const matchesCategory = !selectedCategory || item.topic_id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
-  
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -37,13 +70,30 @@ const AdminNews: React.FC = () => {
       day: 'numeric',
     });
   };
-  
-  const handleDelete = (id: number) => {
+
+  const handleDelete = (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
       console.log('Delete news:', id);
     }
   };
-  
+
+  const handleCreatePost = async (postData: CreatePostData) => {
+    try {
+      setLoading(true);
+      const newPost = await postServices.createPost(postData);
+      setPosts(prev => [newPost, ...prev]);
+      console.log('Post created successfully:', newPost);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      throw error; // Re-throw to let modal handle the error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -51,11 +101,11 @@ const AdminNews: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Quản lý tin tức</h1>
           <p className="text-gray-600">Quản lý bài viết và tin tức</p>
         </div>
-        <Button variant="primary" icon={Plus}>
+        <Button variant="primary" icon={Plus} onClick={openModal}>
           Thêm bài viết
         </Button>
       </div>
-      
+
       {/* Filters */}
       <Card>
         <div className="flex flex-col md:flex-row gap-4">
@@ -72,36 +122,36 @@ const AdminNews: React.FC = () => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
           >
-            <option value="">Tất cả danh mục</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+            <option value="">Tất cả chủ đề</option>
+            {topics.map((topic) => (
+              <option key={topic._id} value={topic._id}>
+                {topic.name}
               </option>
             ))}
           </select>
         </div>
       </Card>
-      
+
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Tổng bài viết</p>
-              <p className="text-2xl font-bold text-gray-900">{newsItems.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{posts.length}</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
               <FileText className="h-6 w-6 text-blue-600" />
             </div>
           </div>
         </Card>
-        
+
         <Card>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Bài nổi bật</p>
               <p className="text-2xl font-bold text-gray-900">
-                {newsItems.filter(item => item.featured).length}
+                {posts.filter(item => item.is_featured).length}
               </p>
             </div>
             <div className="p-3 bg-yellow-100 rounded-full">
@@ -109,7 +159,7 @@ const AdminNews: React.FC = () => {
             </div>
           </div>
         </Card>
-        
+
         <Card>
           <div className="flex items-center justify-between">
             <div>
@@ -121,7 +171,7 @@ const AdminNews: React.FC = () => {
             </div>
           </div>
         </Card>
-        
+
         <Card>
           <div className="flex items-center justify-between">
             <div>
@@ -134,52 +184,52 @@ const AdminNews: React.FC = () => {
           </div>
         </Card>
       </div>
-      
+
       {/* News List */}
       <Card>
         <div className="space-y-4">
           {filteredNews.map((item, index) => (
             <motion.div
-              key={item.id}
+              key={item._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <img
-                src={item.image}
+                src={item.thumbnail?.url || '/placeholder-image.jpg'}
                 alt={item.title}
                 className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
               />
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
-                    {item.category}
+                    {topics.find(topic => topic._id === item.topic_id)?.name || 'Chưa phân loại'}
                   </span>
-                  {item.featured && (
+                  {item.is_featured && (
                     <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
                       Nổi bật
                     </span>
                   )}
                 </div>
-                
+
                 <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
                   {item.title}
                 </h3>
-                
+
                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                  {item.excerpt}
+                  {item.sub_title}
                 </p>
-                
+
                 <div className="flex items-center space-x-4 text-xs text-gray-500">
                   <div className="flex items-center space-x-1">
                     <User className="h-3 w-3" />
-                    <span>{item.author}</span>
+                    <span>{item.user_id || 'Admin'}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-3 w-3" />
-                    <span>{formatDate(item.publishDate)}</span>
+                    <span>{formatDate(item.created_at?.toString() || '')}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Eye className="h-3 w-3" />
@@ -187,7 +237,7 @@ const AdminNews: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2 flex-shrink-0">
                 <Button variant="ghost" size="sm" icon={Eye}>
                   Xem
@@ -199,7 +249,7 @@ const AdminNews: React.FC = () => {
                   variant="ghost" 
                   size="sm" 
                   icon={Trash2}
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item._id || '')}
                 >
                   Xóa
                 </Button>
@@ -207,7 +257,7 @@ const AdminNews: React.FC = () => {
             </motion.div>
           ))}
         </div>
-        
+
         {filteredNews.length === 0 && (
           <div className="text-center py-12">
             <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -220,6 +270,14 @@ const AdminNews: React.FC = () => {
           </div>
         )}
       </Card>
+
+      {/* Post Form Modal */}
+      <PostFormModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSubmit={handleCreatePost}
+        topics={topics}
+      />
     </div>
   );
 };
