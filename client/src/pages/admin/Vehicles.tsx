@@ -23,7 +23,9 @@ import Cookies from 'js-cookie';
 import { RESPONSE_CODE } from '../../constants/responseCode.constants';
 import { useAuthStore } from '../../stores/authStore';
 import CategoriesServices from '../../services/categoriesServices';
+import BrandsServices from '../../services/brandsServices';
 import { CategoryType } from '../../types/categoriesTypes';
+import { BrandType } from '../../types/brandTypes';
 
 const AdminVehicles: React.FC = () => {
   const { showSuccess, showError } = useToast();
@@ -36,8 +38,10 @@ const AdminVehicles: React.FC = () => {
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [brands, setBrands] = useState<BrandType[]>([]);
   const vehicleService = new VehicleServices();
   const categoriesService = new CategoriesServices();
+  const brandsService = new BrandsServices();
   
   // Load vehicles and categories from API when component mounts
   useEffect(() => {
@@ -52,6 +56,9 @@ const AdminVehicles: React.FC = () => {
         const categoriesData = await categoriesService.getCategories();
         setCategories(categoriesData);
         
+        // Load brands
+        const brandsData = await brandsService.getBrands();
+        setBrands(brandsData);
       } catch (error) {
         console.error('Error loading data:', error);
         showError('Lỗi tải dữ liệu', 'Không thể tải dữ liệu');
@@ -78,8 +85,8 @@ const AdminVehicles: React.FC = () => {
   
   // Helper function to get brand name by ID
   const getBrandName = (brandId: string) => {
-    // For now, return brandId as brand name since we don't have brand data
-    return brandId;
+    const brand = brands.find((brand: BrandType) => brand._id === brandId);
+    return brand?.name || brandId;
   };
   
   const handleDelete = async (id: string) => {
