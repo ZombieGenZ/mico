@@ -9,7 +9,7 @@ import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
 import fs from 'fs'
 import { ImageType } from '~/interfaces/image.interfaces'
-import { compressImage, removeUploadedFiles } from '~/utils/image.utils'
+import { compressImage, moveAndCleanup, removeUploadedFiles, safeDeleteFile } from '~/utils/image.utils'
 
 export const setupUploadProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -34,13 +34,11 @@ export const setupUploadProduct = async (req: Request, res: Response, next: Next
     for (const image of images) {
       try {
         const compressed = await compressImage(image.path, image.filename)
-
         const finalPath = path.join(directoryPath, compressed.filename)
-        fs.renameSync(compressed.path, finalPath)
 
-        if (fs.existsSync(image.path)) {
-          fs.unlinkSync(image.path)
-        }
+        await moveAndCleanup(compressed.path, finalPath)
+
+        await safeDeleteFile(image.path)
 
         imgList.push({
           name: compressed.filename,
@@ -48,6 +46,7 @@ export const setupUploadProduct = async (req: Request, res: Response, next: Next
           url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${compressed.filename}`
         })
       } catch (err) {
+        console.error(`Error processing image ${image.filename}:`, err)
         return next(err)
       }
     }
@@ -81,13 +80,11 @@ export const setupUploadProductOptional = async (req: Request, res: Response, ne
     for (const image of images) {
       try {
         const compressed = await compressImage(image.path, image.filename)
-
         const finalPath = path.join(directoryPath, compressed.filename)
-        fs.renameSync(compressed.path, finalPath)
 
-        if (fs.existsSync(image.path)) {
-          fs.unlinkSync(image.path)
-        }
+        await moveAndCleanup(compressed.path, finalPath)
+
+        await safeDeleteFile(image.path)
 
         imgList.push({
           name: compressed.filename,
@@ -95,6 +92,7 @@ export const setupUploadProductOptional = async (req: Request, res: Response, ne
           url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${compressed.filename}`
         })
       } catch (err) {
+        console.error(`Error processing image ${image.filename}:`, err)
         return next(err)
       }
     }
@@ -106,6 +104,60 @@ export const setupUploadProductOptional = async (req: Request, res: Response, ne
     next(error)
   }
 }
+
+// export const deferredCleanupUploadProduct = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const user = req.user as User
+//     const images = req.files as Express.Multer.File[]
+
+//     if (!images || images.length === 0) {
+//       return res.status(HTTPSTATUS.UNPROCESSABLE_ENTITY).json({
+//         code: RESPONSE_CODE.INPUT_DATA_ERROR,
+//         message: FILE_MANAGEMENT_MESSAGE.IMAGE_IS_REQUIRED
+//       })
+//     }
+
+//     const directoryPath = path.join(__dirname, `../../public/images/uploads/products/${user._id}`)
+
+//     if (!fs.existsSync(directoryPath)) {
+//       fs.mkdirSync(directoryPath, { recursive: true })
+//     }
+
+//     const imgList: ImageType[] = []
+//     const filesToCleanup: string[] = []
+
+//     for (const image of images) {
+//       try {
+//         const compressed = await compressImage(image.path, image.filename)
+//         const finalPath = path.join(directoryPath, compressed.filename)
+
+//         fs.renameSync(compressed.path, finalPath)
+
+//         filesToCleanup.push(image.path)
+
+//         imgList.push({
+//           name: compressed.filename,
+//           path: `../../public/images/uploads/products/${user._id}/${compressed.filename}`,
+//           url: `${process.env.IMAGE_URL}/images/uploads/products/${user._id}/${compressed.filename}`
+//         })
+//       } catch (err) {
+//         return next(err)
+//       }
+//     }
+
+//     setTimeout(async () => {
+//       for (const filePath of filesToCleanup) {
+//         await safeDeleteFile(filePath)
+//       }
+//     }, 1000)
+
+//     req.image = imgList
+//     next()
+//   } catch (error) {
+//     removeUploadedFiles(req)
+//     next(error)
+//   }
+// }
 
 export const productValidator = async (req: Request, res: Response, next: NextFunction) => {
   checkSchema(

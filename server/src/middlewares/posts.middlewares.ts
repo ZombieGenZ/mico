@@ -9,7 +9,7 @@ import User from '~/models/schemas/users.schemas'
 import databaseService from '~/services/database.services'
 import fs from 'fs'
 import { ImageType } from '~/interfaces/image.interfaces'
-import { compressImage, removeUploadedFiles } from '~/utils/image.utils'
+import { compressImage, moveAndCleanup, removeUploadedFiles } from '~/utils/image.utils'
 
 export const setupUploadPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -32,13 +32,9 @@ export const setupUploadPost = async (req: Request, res: Response, next: NextFun
 
     try {
       const compressed = await compressImage(image.path, image.filename)
-
       const finalPath = path.join(directoryPath, compressed.filename)
-      fs.renameSync(compressed.path, finalPath)
 
-      if (fs.existsSync(image.path)) {
-        fs.unlinkSync(image.path)
-      }
+      await moveAndCleanup(compressed.path, finalPath)
 
       const img: ImageType = {
         name: compressed.filename,
@@ -75,13 +71,9 @@ export const setupUploadPostOptional = async (req: Request, res: Response, next:
 
     try {
       const compressed = await compressImage(image.path, image.filename)
-
       const finalPath = path.join(directoryPath, compressed.filename)
-      fs.renameSync(compressed.path, finalPath)
 
-      if (fs.existsSync(image.path)) {
-        fs.unlinkSync(image.path)
-      }
+      await moveAndCleanup(compressed.path, finalPath)
 
       const img: ImageType = {
         name: compressed.filename,

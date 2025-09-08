@@ -164,3 +164,37 @@ export const compressImage = async (
     filename: webpFilename
   }
 }
+
+export const safeDeleteFile = async (filePath: string, maxRetries: number = 3): Promise<void> => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      if (fs.existsSync(filePath)) {
+        await fs.promises.unlink(filePath)
+        return
+      }
+    } catch (error: any) {
+      if (error.code === 'EBUSY' || error.code === 'ENOENT') {
+        if (i === maxRetries - 1) {
+          console.warn(`Failed to delete file after ${maxRetries} attempts: ${filePath}`)
+          return
+        }
+        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, i) * 100))
+        continue
+      }
+      throw error
+    }
+  }
+}
+
+export const moveAndCleanup = async (sourcePath: string, targetPath: string): Promise<void> => {
+  try {
+    await fs.promises.copyFile(sourcePath, targetPath)
+    await safeDeleteFile(sourcePath)
+  } catch (error) {
+    if (fs.existsSync(targetPath)) {
+      console.warn(`File moved successfully but cleanup failed: ${sourcePath}`)
+      return
+    }
+    throw error
+  }
+}
