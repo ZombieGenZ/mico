@@ -18,6 +18,8 @@ export const ROUTES = {
   LOGIN: '/login',
   ADMIN_CUSTOMERS: '/admin/customers',
   ADMIN_REPORTS: '/admin/reports',
+  ADMIN_BRANDS: '/admin/brands',
+  ADMIN_TOPICS: '/admin/topics',
 } as const;
 
 export const COLORS = {

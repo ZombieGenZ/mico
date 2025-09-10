@@ -30,6 +30,8 @@ import AdminQuotes from './pages/admin/Quotes';
 import AdminSettings from './pages/admin/Settings';
 import AdminCustomers from './pages/admin/Customers';
 import AdminReports from './pages/admin/Reports';
+import AdminBrands from './pages/admin/Brands';
+import AdminTopics from './pages/admin/Topics';
 
 // Routes
 import { ROUTES } from './lib/constants';
@@ -169,11 +171,31 @@ function App() {
               }
             />
             <Route
+              path={ROUTES.ADMIN_BRANDS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminBrands />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path={ROUTES.ADMIN_CATEGORIES}
               element={
                 <ProtectedRoute>
                   <AdminLayout>
                     <AdminCategories />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ADMIN_TOPICS}
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminTopics />
                   </AdminLayout>
                 </ProtectedRoute>
               }

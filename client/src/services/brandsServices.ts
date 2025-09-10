@@ -15,19 +15,34 @@ export default class BrandsServices {
 
     }
 
-    async createBrand(brand: BrandType): Promise<BrandType> {
-        const response = await axios.post(`${this.apiUrl}/brands`, brand)
+    async createBrand(accessToken: string, brand: BrandType): Promise<BrandType> {
+        const response = await axios.post(`${this.apiUrl}/brands`, brand, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
         return response.data.data
 
     }
 
-    async updateBrand(id: string, brand: BrandType): Promise<BrandType> {
-        const response = await axios.put(`${this.apiUrl}/brands/${id}`, brand)
+    async updateBrand(id: string, brand: BrandType, accessToken: string): Promise<BrandType> {
+        const response = await axios.put(`${this.apiUrl}/brands/${id}`, brand, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
         return response.data.data
     }
 
-    async deleteBrand(id: string): Promise<void> {
-        await axios.delete(`${this.apiUrl}/brands/${id}`)
+    async deleteBrand(id: string, accessToken: string): Promise<void> {
+        await axios.delete(`${this.apiUrl}/brands/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
     }
 }
 

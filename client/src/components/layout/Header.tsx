@@ -57,7 +57,7 @@ const Header: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
               >
                 <Phone className="h-3 w-3 text-accent-400" />
-                <span>0123.456.789</span>
+                <span>0879.779.911</span>
               </motion.div>
               <motion.div 
                 className="flex items-center space-x-1"

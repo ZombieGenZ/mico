@@ -57,7 +57,7 @@ const AdminNews: React.FC = () => {
       }
     }
     fetchData();
-  }, [])
+  }, [posts])
 
   const filteredNews = posts.filter(item => {
     if (!item || !item.title || !item.content) return false;

@@ -10,6 +10,8 @@ import {
   Settings,
   Users,
   BarChart3,
+  Badge,
+  Library,
 } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 
@@ -31,6 +33,16 @@ const Sidebar: React.FC = () => {
       name: 'Danh mục',
       icon: Wrench,
       path: ROUTES.ADMIN_CATEGORIES,
+    },
+    {
+      name: 'Thương hiệu',
+      icon: Badge,
+      path: ROUTES.ADMIN_BRANDS,
+    },
+    {
+      name: 'Chủ đề',
+      icon: Library,
+      path: ROUTES.ADMIN_TOPICS,
     },
     {
       name: 'Tin tức',
